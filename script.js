@@ -1,6 +1,7 @@
 document.addEventListener("DOMContentLoaded", function() {
-    const dataFiles = ["data/WL1_clean.csv", "data/WL1_clean.csv", "data/WL1_clean.csv", "data/WL1_clean.csv"];
+    const dataFiles = ["data/1/WL1_clean.csv", "data/1/WL2_clean.csv", "data/1/WN_clean.csv", "data/1/WR_clean.csv"];
     const plots = ["plot1", "plot2", "plot3", "plot4"];
+    const titles = ["WL1", "WL2", "WN", "WR"];
     const margin = { top: 20, right: 30, bottom: 30, left: 40 };
     const width = 500 - margin.left - margin.right;
     const height = 300 - margin.top - margin.bottom;
@@ -21,6 +22,15 @@ document.addEventListener("DOMContentLoaded", function() {
             .attr("height", height + margin.top + margin.bottom)
             .append("g")
             .attr("transform", `translate(${margin.left},${margin.top})`);
+
+        // Add the title
+        svg.append("text")
+            .attr("x", (width / 2))             
+            .attr("y", 9 - (margin.top / 2))
+            .attr("text-anchor", "middle")  
+            .style("font-size", "16px") 
+            .style("text-decoration", "bold")  
+            .text(titles[index]);
 
         // Define the gradient
         const gradient = svg.append("defs")
@@ -54,7 +64,8 @@ document.addEventListener("DOMContentLoaded", function() {
             .attr("r", 4)
             .style("opacity", 0);
 
-        const tooltip = d3.select(`#${plotId}`)
+        // const tooltip = d3.select(`#${plotId}`)
+        const tooltip = d3.select("body")
             .append("div")
             .attr("class", "tooltip");
 
@@ -129,8 +140,8 @@ document.addEventListener("DOMContentLoaded", function() {
                     
                         tooltips[index].style("opacity", 1)
                             .html(`CoPx: ${CoPx}<br>CoPy: ${CoPy}<br>Displacement: ${displacement}`)
-                            .style("left", `${event.pageX - 10}px`)
-                            .style("top", `${event.pageY - 100}px`);
+                            .style("left", `${event.pageX + 10}px`)
+                            .style("top", `${event.pageY + 10}px`);
         
                         svgs[index].append("line")
                             .attr("class", "hover-line")

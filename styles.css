@@ -42,12 +42,13 @@ h1 {
 
 .tooltip {
     position: absolute;
+    /* position: relative; */
     text-align: center;
     width: 150px;
     height: auto;
     padding: 5px;
     font: 12px sans-serif;
-    background: rgb(135, 159, 188);
+    background: rgb(125, 173, 232);
     border: 0px;
     border-radius: 8px;
     pointer-events: none;
