@@ -1,0 +1,73 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+}
+
+h1 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+#slider-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+#time-slider {
+    width: 60%;
+    display: block;
+    margin-right: 10px; 
+}
+
+#slider-value {
+    font-size: 14px;
+    margin-left: 10px;
+}
+
+#plots-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+}
+
+.plot {
+    width: 45%;
+    height: 300px;
+    margin-bottom: 20px;
+    border: 1px solid #210303;
+    position: relative;
+}
+
+.tooltip {
+    position: absolute;
+    text-align: center;
+    width: 150px;
+    height: auto;
+    padding: 5px;
+    font: 12px sans-serif;
+    background: rgb(135, 159, 188);
+    border: 0px;
+    border-radius: 8px;
+    pointer-events: none;
+    transition: opacity 0.2s;
+}
+
+.line {
+    fill: none;
+    stroke-width: 2px;
+}
+
+/* 
+.dot {
+    fill: steelblue;
+    stroke: #c72424;
+    stroke-width: 1.5px;
+} */
+
+.hover-line {
+    stroke: #000;
+    stroke-width: 1px;
+    stroke-dasharray: 3, 3;
+}
