@@ -13,6 +13,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const paths = [];
     const dots = [];
     const tooltips = [];
+    const hoverAreas = [];
 
     // Initialize the plots
     plots.forEach((plotId, index) => {
@@ -32,7 +33,7 @@ document.addEventListener("DOMContentLoaded", function () {
             .style("text-decoration", "bold")
             .text(titles[index]);
 
-        const xScale = d3.scaleLinear().domain([-0.015, 0.015]).range([0, width]);
+        const xScale = d3.scaleLinear().domain([-0.01, 0.01]).range([0, width]);
         const yScale = d3.scaleLinear().domain([-0.02, 0.02]).range([height, 0]);
 
         const line = d3.line()
@@ -56,6 +57,12 @@ document.addEventListener("DOMContentLoaded", function () {
             .attr("r", 4)
             .style("opacity", 0);
 
+        const hoverArea = svg.append("circle")
+            .attr("class", "hover-area")
+            .attr("r", 30) // Larger radius for the hover area
+            .style("opacity", 0) // Make it invisible
+            .style("pointer-events", "all"); // Ensure it can trigger events
+
         const tooltip = d3.select("body")
             .append("div")
             .attr("class", "tooltip");
@@ -67,6 +74,7 @@ document.addEventListener("DOMContentLoaded", function () {
         paths.push(path);
         dots.push(dot);
         tooltips.push(tooltip);
+        hoverAreas.push(hoverArea);
     });
 
     // Load the data for each plot
@@ -133,20 +141,30 @@ document.addEventListener("DOMContentLoaded", function () {
                         dots[index].datum(lastDataPoint)
                             .attr("cx", cx)
                             .attr("cy", cy)
-                            .style("opacity", 1);
+                            .style("opacity", 1)
+                            .raise();
+
+                        // Update the hover area position
+                        hoverAreas[index].datum(lastDataPoint)
+                            .attr("cx", cx)
+                            .attr("cy", cy)
+                            // .style("opacity", 1)
+                            .raise();
+
                     } else {
                         dots[index].style("opacity", 0);
+                        hoverAreas[index].style("opacity", 0);
                     }
                 } else {
                     dots[index].style("opacity", 0);
+                    hoverAreas[index].style("opacity", 0);
                 }
 
                 // Remove old hover lines
                 svgs[index].selectAll(".hover-line").remove();
 
                 // Add tooltips to the dots
-                svgs[index].selectAll(".dot")
-                    .on("mouseover", function (event, d) {
+                hoverAreas[index].on("mouseover", function (event, d) {
                         const CoPx = parseFloat(d.CoPx).toFixed(5);
                         const CoPy = parseFloat(d.CoPy).toFixed(5);
                         const displacement = parseFloat(d.displacement).toFixed(5);
