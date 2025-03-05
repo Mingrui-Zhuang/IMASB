@@ -11,19 +11,21 @@ h1 {
 #slider-container {
     display: flex;
     justify-content: center;
-    align-items: center;
+    align-items: baseline;
     margin-bottom: 20px;
+    gap: 1em;
 }
 
 #time-slider {
     width: 60%;
     display: block;
-    margin-right: 10px; 
+    margin-left: 20%; 
 }
 
 #slider-value {
     font-size: 14px;
     margin-left: 10px;
+    width: 20%;
 }
 
 #plots-container {
