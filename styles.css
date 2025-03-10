@@ -157,3 +157,16 @@ button {
     stroke-width: 1px;
     stroke-dasharray: 3, 3;
 }
+label{
+    display: flex;
+    align-items: baseline;
+    flex-direction: column; /* Stack items vertically */
+}
+
+/*Adjust the height of the bar*/
+#bar1,
+#bar2,
+#bar3,
+#bar4{
+    height: 250px;
+}

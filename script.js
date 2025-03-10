@@ -376,6 +376,8 @@ document.addEventListener("DOMContentLoaded", function () {
                     });
             });
         });
+
+    
     // Resize the plots when the window is resized
     // window.addEventListener('resize', resizePlots);
 
@@ -414,5 +416,228 @@ document.addEventListener("DOMContentLoaded", function () {
     //         }
     //     });
     // }
+
+        //get each data
+        const WL1 = datasets[0];
+        const WL2 = datasets[1];
+        const WN = datasets[2];
+        const WR = datasets[3];
+
+        //Last column
+        const WL1_work = extractLastColumn(WL1);
+        const WL2_work = extractLastColumn(WL2);
+        const WN_work = extractLastColumn(WN);
+        const WR_work = extractLastColumn(WR);
+
+        //Second last column
+        const WL1_dis = extractSecondLast(WL1);
+        const WL2_dis = extractSecondLast(WL2);
+        const WN_dis = extractSecondLast(WN);
+        const WR_dis = extractSecondLast(WR);
+
+        const maxValue = Math.max(...WN_dis);
+
+        //important numbers for setting up the bar graph
+        //Let idx be a parameter for the function.
+        //data.slice(0,idx), if idx is 3, it means we are plotting the
+        //first three data. Using location[idx] for the x location of data from 
+        //left to right. w[idx] tells us the width of each bar.
+        const data = [WL1_dis,WL2_dis,WN_dis,WR_dis];
+        const location = [[170], [105, 275], [85, 200, 315], [73, 161, 249, 337]];
+        const w = [100,60,40,30];
+        let labels = ["WL1", "WL2", "WN", "WR"];
+
+        const slider1 = document.getElementById('time-slider-1');
+        const sliderValueDisplay1 = document.getElementById('slider-value-1');
+        // console.log(slider);
+        // console.log(sliderValueDisplay);
+
+        //set up the dimension of bar
+        let barwidth = 400;
+        let barheight = 250;
+        let upperspace = 30;
+        let bottomspace = 30;
+        let leftspace = 40;
+        let rightspace = 20;
+        
+    
+
+        createBarChart(1, 0);
+        createBarChart(2, 0);
+        createBarChart(3, 0);
+        createBarChart(4, 0);
+
+        slider1.addEventListener('input', function () {
+            const index1 = parseInt(slider1.value); // Get the current index from the slider
+            sliderValueDisplay1.textContent = `${index1}s`; // Show current slider value in seconds
+            // Update the bar chart with the new value from WL1[index]
+            createBarChart(1, index1-1);
+            //updateBarChart(WL1_dis, index1-1, maxValue);//so it moves according to slider value
+          });
+
+        const slider2 = document.getElementById('time-slider-2');
+        const sliderValueDisplay2 = document.getElementById('slider-value-2');
+
+        slider2.addEventListener('input', function () {
+            const index2 = parseInt(slider2.value); // Get the current index from the slider
+            sliderValueDisplay2.textContent = `${index2}s`; // Show current slider value in seconds
+            //console.log(index1);
+            //console.log(WL1_dis[index1-1]);
+
+            // Update the bar chart with the new value from WL1[index]
+            createBarChart(2, index2-1);
+          });
+
+        const slider3 = document.getElementById('time-slider-3');
+        const sliderValueDisplay3 = document.getElementById('slider-value-3');
+  
+        slider3.addEventListener('input', function () {
+            const index3 = parseInt(slider3.value); // Get the current index from the slider
+            sliderValueDisplay3.textContent = `${index3}s`; // Show current slider value in seconds
+            //console.log(index1);
+            //console.log(WL1_dis[index1-1]);
+  
+            // Update the bar chart with the new value from WL1[index]
+            createBarChart(3, index3-1);
+
+        const slider4 = document.getElementById('time-slider-4');
+        const sliderValueDisplay4 = document.getElementById('slider-value-4');
+      
+        slider4.addEventListener('input', function () {
+            const index4 = parseInt(slider4.value); // Get the current index from the slider
+            sliderValueDisplay4.textContent = `${index4}s`; // Show current slider value in seconds
+
+      
+            // Update the bar chart with the new value from WL1[index]
+            createBarChart(4, index4-1);
+            });
+        });
+  
+
+
+
+
+        //choice means choosing slider, idx means oen of the 6000 values.
+        function createBarChart(choice, idx){
+            const barChartContainer = d3.select(`#bar${choice}`);
+
+            //Remove any existing bars
+            barChartContainer.selectAll('*').remove();
+
+            // Set up the SVG container
+            const svg = barChartContainer.append("svg")
+                .attr("width", barwidth) // Width of the chart (you can adjust it)
+                .attr("height", barheight); // Height of the chart
+
+            //slice the data based on idx to get the first 'choice' elements
+            const selectedData = data.slice(0,choice);
+            const selectedLocations = location[choice - 1];//get the locations of each bar
+            const selectedWidths = w[choice - 1];//get the width of corresponding number of bars
+
+            selectedData.forEach((dataSet, i) => {
+                svg.append('rect')
+                    .attr('class', `bar-${i}`)
+                    .attr('x', selectedLocations[i]) //use corresponding location
+                    .attr('y',barheight - scaleHeight(dataSet[idx],maxValue)-bottomspace)// - bottomspace) //select y location
+                    .attr('width', selectedWidths)
+                    .attr('height', scaleHeight(dataSet[idx],maxValue))
+                    .attr('fill', getBarColor(i));
+                //console.log(scaleHeight(dataSet[idx],maxValue));
+                //console.log(selectedWidths[i]);
+
+            });
+            createYAxisLabels(svg, maxValue);
+            // Create the X-axis
+            createXAxisLabels(svg, choice); // Create X-axis without scaling, based on categories
+        }
+
+        function scaleHeight(value, max) {
+            return (value / max) * (barheight-upperspace-bottomspace); // Scale the height of the bar relative to the max value
+        }
+        // Function to get the color for each bar (based on its dataset)
+        function getBarColor(j) {
+            const colors = [
+                "rgba(0, 0, 0, 0.6)", // For WL1
+                "rgba(22, 50, 50, 0.6)", // For WL2
+                "rgba(50, 50, 50, 0.6)", // For WN
+                "rgba(255, 255, 255, 0.6)" // For WR
+            ];
+            return colors[j]; // Use the color corresponding to the dataset
+        }
+
+        //   // Function to create Y-axis labels
+        function createYAxisLabels(svg, maxValue) {
+            const yTicks = 10; // Number of ticks for the y-axis
+
+            const yScale = d3.scaleLinear()
+            .domain([0.0, maxValue])
+            .range([barheight-bottomspace, upperspace]);
+
+            // Create Y-axis labels with ticks
+            const yAxis = d3.axisLeft(yScale).ticks(yTicks);
+
+            // Append the y-axis labels
+            svg.append("g")
+            .attr("class", "y-axis")
+            .attr("transform", `translate(${leftspace}, 0)`) // Position the axis on the left of the bars
+            .call(yAxis);
+                
+            // Add the Y-axis label
+            svg.append("text")
+            .attr("class", "y-axis-label")
+            .attr("transform", "rotate(-90)") // Rotate the label to be vertical
+            .attr("y", 10) // Position the label
+            .attr("x", -barheight / 2) // Adjust this to position the label along the Y-axis
+            .style("text-anchor", "middle") // Center the label horizontally
+            .style("font-size", "12px")
+            .text("Displacement");
+        }
+
+        function createXAxisLabels(svg, idx){
+            const arr = labels.slice(0,idx)
+            const xScale = d3.scaleBand()
+                .domain(arr) //categories
+                .range([leftspace, barwidth]) //range of labels
+                .padding(0.1); //padding between bars
+
+            const xAxis = d3.axisBottom(xScale);
+
+            // Append the X-axis to the SVG
+            svg.append("g")
+                .attr("class", "x-axis")
+                .attr("transform", `translate(0, ${barheight-bottomspace})`) // Position X-axis at the bottom of the chart
+                .call(xAxis);
+
+            // Add X-axis label
+            svg.append("text")
+                .attr("class", "x-axis-label")
+                .attr("transform", `translate(${(barwidth+leftspace)/2}, ${barheight-5})`)
+                .style("text-anchor", "middle")
+                .text("Environment")
+                .style("font-size", "12px");  // Adjust font size
+        }
     });
+
+
+
+
+
+    //Get the last columns from dataset
+    const extractLastColumn = (data) => {
+        // Iterate through each row and retrieve the value of the last column
+        return data.map(row => {
+            // Get the last key of the row, which corresponds to the last column
+            const lastColumnKey = Object.keys(row)[Object.keys(row).length - 1];
+            return row[lastColumnKey]; //Return the value of last column
+        })
+    }
+    //Get the second last columns from dataset
+    const extractSecondLast = (data) => {
+        // Iterate through each row and retrieve the value of the second last column
+        return data.map(row => {
+            // Get the last key of the row, which corresponds to the second last column
+            const secondLast = Object.keys(row)[Object.keys(row).length - 2];
+            return row[secondLast]; //Return the value of last column
+        })
+    }
 });
