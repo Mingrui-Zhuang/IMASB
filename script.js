@@ -546,7 +546,7 @@ document.addEventListener("DOMContentLoaded", function () {
     
             slider.addEventListener('input', function () {
                 const index = parseInt(slider.value); // Get the current index from the slider
-                sliderValueDisplay.textContent = `${index}s`; // Show current slider value in seconds
+                sliderValueDisplay.textContent = `${index/100}s`; // Show current slider value in seconds
                 // Update the bar chart with the new value from WL1[index]
                 createBarChart(chartIndex, index - 1);
             });
