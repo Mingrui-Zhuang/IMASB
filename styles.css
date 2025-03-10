@@ -51,9 +51,12 @@ button {
     right: 10px;
 }
 
-
-/* slider */
-#slider-container {
+/* Slider containers */
+#slider-container-1,
+#slider-container-2,
+#slider-container-3,
+#slider-container-4,
+#slider-container-combined {
     display: flex;
     justify-content: center;
     align-items: baseline;
@@ -61,27 +64,59 @@ button {
     gap: 1em;
 }
 
-#time-slider {
+/* Sliders */
+#time-slider-1,
+#time-slider-2,
+#time-slider-3,
+#time-slider-4,
+#time-slider-combined {
     width: 60%;
     display: block;
     margin-left: 20%; 
 }
 
-#slider-value {
+/* Slider values */
+#slider-value-1,
+#slider-value-2,
+#slider-value-3,
+#slider-value-4,
+#slider-value-combined {
     font-size: 14px;
     margin-left: 10px;
     width: 20%;
 }
 
-/* Line plot */
-#plots-container {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-around;
+/* Plot containers */
+#plots-container-1,
+#plots-container-2,
+#plots-container-3,
+#plots-container-4 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-auto-rows: minmax(200px, auto);
+    gap: 20px;
 }
 
 .plot {
-    width: 45%;
+    grid-row: 1;
+    grid-column: span 2;
+    width: 100%;
+    height: 400px;
+    margin: 10px;
+    border: 1px solid #210303;
+    position: relative;
+}
+
+#plots-container-combined {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+    justify-items: center;
+}
+
+.plot- {
+    width: 100%;
     height: 300px;
     margin-bottom: 20px;
     border: 1px solid #210303;
