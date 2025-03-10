@@ -1,13 +1,58 @@
-body {
-    font-family: Arial, sans-serif;
-    margin: 20px;
+body, html {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    overflow: hidden; /* Prevent scrolling beyond the slides */
 }
+
+.slides-container {
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    overflow-y: scroll;
+    scroll-snap-type: y mandatory;
+    height: 100vh;
+}
+
+.slide {
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    display: flex;
+    scroll-snap-align: start;
+    /* align-items: center; */
+    /* justify-content: center; */
+}
+
+#slide1 { background-color: #3498db; }
+#slide2 { background-color: #2ecc71; }
+#slide3 { background-color: #e74c3c; }
+#slide4 { background-color: #9b59b6; }
+#slide5 { background-color: #f1c40f; }
 
 h1 {
     text-align: center;
     margin-bottom: 20px;
 }
 
+button {
+    position: fixed;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: rgba(0, 0, 0, 0.5);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    font-size: 1rem;
+}
+  
+#nextBtn {
+    right: 10px;
+}
+
+
+/* slider */
 #slider-container {
     display: flex;
     justify-content: center;
@@ -28,6 +73,7 @@ h1 {
     width: 20%;
 }
 
+/* Line plot */
 #plots-container {
     display: flex;
     flex-wrap: wrap;
@@ -43,8 +89,8 @@ h1 {
 }
 
 .tooltip {
-    position: absolute;
-    /* position: relative; */
+    /* position: absolute; */
+    position: relative;
     text-align: center;
     width: 150px;
     height: auto;

@@ -15,6 +15,71 @@ document.addEventListener("DOMContentLoaded", function () {
     const tooltips = [];
     const hoverAreas = [];
 
+    // Navigation between sections
+    let currentSlide = 0;
+    const slidesContainer = document.querySelector('.slides-container');
+    const slides = document.querySelectorAll('.slide');
+    const totalSlides = slides.length;
+
+    // Ensure slides cover the full screen
+    slidesContainer.style.margin = '0';
+    slidesContainer.style.padding = '0';
+    slidesContainer.style.height = '100vh';
+
+    slides.forEach(slide => {
+        slide.style.margin = '0';
+        slide.style.padding = '0';
+        slide.style.height = '100vh';
+    });
+
+    // Function to update slide position
+    function updateSlide() {
+        const currentSlideElement = slides[currentSlide];
+        console.log(`Updating slide to ${currentSlide}`);
+        currentSlideElement.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    // Next and Previous Button Logic
+    document.getElementById('nextBtn').addEventListener('click', () => {
+        if (currentSlide < totalSlides - 1) {
+            currentSlide++;
+            console.log(`Next button clicked, currentSlide: ${currentSlide}`);
+            updateSlide();
+        }
+    });
+
+    // Wheel Navigation Logic
+    let isScrolling = false; // Prevent rapid scrolling
+    let scrollTimeout;
+
+    document.addEventListener('wheel', (event) => {
+        if (isScrolling) return; // Ignore if already scrolling
+
+        clearTimeout(scrollTimeout); // Clear the previous timeout
+
+        scrollTimeout = setTimeout(() => {
+            isScrolling = false; // Reset scrolling flag after a short delay
+        }, 5000); // Adjust delay as needed
+
+        isScrolling = true; // Set scrolling flag
+
+        if (event.deltaY > 0) {
+            // Scroll down: Go to next slide
+            if (currentSlide < totalSlides - 1) {
+                currentSlide++;
+                console.log(`Wheel scrolled down, currentSlide: ${currentSlide}`);
+                updateSlide();
+            }
+        } else if (event.deltaY < 0) {
+            // Scroll up: Go to previous slide
+            if (currentSlide > 0) {
+                currentSlide--;
+                console.log(`Wheel scrolled up, currentSlide: ${currentSlide}`);
+                updateSlide();
+            }
+        }
+    });
+
     // Initialize the plots
     plots.forEach((plotId, index) => {
         const svg = d3.select(`#${plotId}`)
@@ -198,30 +263,47 @@ document.addEventListener("DOMContentLoaded", function () {
                     });
             });
         });
+
+        // Initial call to set the dimensions correctly on page load
+        // resizePlots();
     });
 
     // Resize the plots when the window is resized
-    window.addEventListener('resize', resizePlots);
+    // window.addEventListener('resize', resizePlots);
 
-    function resizePlots() {
-        const plots = document.querySelectorAll('.plot');
-        plots.forEach(plot => {
-            const width = plot.clientWidth;
-            const height = plot.clientHeight;
+    // function resizePlots() {
+    //     const plots = document.querySelectorAll('.plot');
+    //     plots.forEach((plot, index) => {
+    //         if (xScales[index] && yScales[index]) {
+    //             const width = plot.clientWidth - margin.left - margin.right;
+    //             const height = plot.clientHeight - margin.top - margin.bottom;
 
-            // Select the SVG element within the plot and update its dimensions
-            d3.select(plot).select('svg')
-                .attr('width', width)
-                .attr('height', height);
+    //             // Update the SVG element dimensions
+    //             d3.select(plot).select('svg')
+    //                 .attr('width', width + margin.left + margin.right)
+    //                 .attr('height', height + margin.top + margin.bottom);
 
-            // Update the scales and axes
-            const xScale = d3.scaleLinear().range([0, width]);
-            const yScale = d3.scaleLinear().range([height, 0]);
-            d3.select(plot).select('.x-axis').call(d3.axisBottom(xScale));
-            d3.select(plot).select('.y-axis').call(d3.axisLeft(yScale));
-        });
-    }
+    //             // Update the scales and axes
+    //             xScales[index].range([0, width]);
+    //             yScales[index].range([height, 0]);
+    //             d3.select(plot).select('.x-axis').call(d3.axisBottom(xScales[index]));
+    //             d3.select(plot).select('.y-axis').call(d3.axisLeft(yScales[index]));
 
-    // Initial call to set the dimensions correctly on page load
-    resizePlots();
+    //             // Update the line path
+    //             const data = paths[index].datum();
+    //             if (data) {
+    //                 paths[index].attr("d", lines[index](data));
+    //             }
+
+    //             // Update the dot position
+    //             const lastDataPoint = dots[index].datum();
+    //             if (lastDataPoint) {
+    //                 const cx = xScales[index](lastDataPoint.CoPx);
+    //                 const cy = yScales[index](lastDataPoint.CoPy);
+    //                 dots[index].attr("cx", cx).attr("cy", cy);
+    //                 hoverAreas[index].attr("cx", cx).attr("cy", cy);
+    //             }
+    //         }
+    //     });
+    // }
 });
