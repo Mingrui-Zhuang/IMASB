@@ -92,7 +92,7 @@ button {
 #slider-container-combined {
     display: flex;
     justify-content: center;
-    align-items: center; /* Align items in the center vertically */
+    align-items: baseline; 
     flex-direction: row; /* Ensure items are in the same row */
     margin-bottom: 20px;
     gap: 1em;
@@ -106,7 +106,7 @@ button {
 #time-slider-combined {
     width: 70%;
     display: block;
-    margin-left: 0; 
+    margin-left: 20%; 
     /* transform: translateX(-48%); */
 }
 
@@ -118,7 +118,7 @@ button {
 #slider-value-combined {
     font-size: 14px;
     margin-left: 10px;
-    width: auto;
+    width: 30%;
 }
 
 /* Plot containers */
