@@ -1,85 +1,17 @@
-// ******************************************** Nagivation ****************************************************
-function moveToNextSlide() {
-    const slides = document.querySelectorAll('.slide');
-    let currentSlide = Array.from(slides).findIndex(slide => slide.style.display !== 'none');
-    slides[currentSlide].style.opacity = 0;
-    setTimeout(() => {
-        slides[currentSlide].style.display = 'none';
-        let nextSlide = (currentSlide + 1) % slides.length;
-        slides[nextSlide].style.display = 'block';
-        setTimeout(() => {
-            slides[nextSlide].style.opacity = 1;
-        }, 50); // Small delay
-
-        // Check if the next slide is the last one
-        if (nextSlide === slides.length - 1) {
-            document.getElementById('nextBtn').style.display = 'none';
-            document.removeEventListener('wheel', handleWheelEvent);
-        }
-    }, 200); // Duration of the fade-out effect
-}
-
-function moveToPreviousSlide() {
-    const slides = document.querySelectorAll('.slide');
-    let currentSlide = Array.from(slides).findIndex(slide => slide.style.display !== 'none');
-    slides[currentSlide].style.opacity = 0;
-    setTimeout(() => {
-        slides[currentSlide].style.display = 'none';
-        let previousSlide = (currentSlide - 1 + slides.length) % slides.length;
-        slides[previousSlide].style.display = 'block';
-        setTimeout(() => {
-            slides[previousSlide].style.opacity = 1;
-        }, 50); // Small delay
-
-        // Show the next button again if it was hidden
-        document.getElementById('nextBtn').style.display = 'block';
-        document.addEventListener('wheel', handleWheelEvent);
-    }, 200); // Duration of the fade-out effect
-}
-
-document.getElementById('nextBtn').addEventListener('click', function() {
-    moveToNextSlide();
-});
-
-let isScrolling = false;
-
-function handleWheelEvent(event) {
-    if (isScrolling) return;
-    isScrolling = true;
-
-    if (event.deltaY > 0) {
-        moveToNextSlide();
-    } else if (event.deltaY < 0) {
-        moveToPreviousSlide();
-    }
-
-    setTimeout(() => {
-        isScrolling = false;
-    }, 2000); // Adjust the timeout duration as needed
-}
-
-document.addEventListener('wheel', handleWheelEvent);
-
-// Initialize the first slide to be visible
-document.addEventListener('DOMContentLoaded', function() {
-    const slides = document.querySelectorAll('.slide');
-    slides.forEach((slide, index) => {
-        slide.style.display = index === 0 ? 'block' : 'none';
-        slide.style.transition = 'opacity 0.5s'; // Add transition for smooth fade effect
-        slide.style.opacity = index === 0 ? 1 : 0;
-    });
-});
-
-// ******************************************** Plots ****************************************************
 document.addEventListener("DOMContentLoaded", function () {
     const dataFiles = ["data/1/WL1_clean.csv", "data/1/WL2_clean.csv", "data/1/WN_clean.csv", "data/1/WR_clean.csv"];
     const plots = ["plot1", "plot2", "plot3", "plot4"];
     const lineplots = ["plot-1", "plot-2", "plot-3", "plot-4"];
-
+    const barPlots = ["bar1", "bar2", "bar3", "bar4"];
     const titles = ["WL1", "WL2", "WN", "WR"];
-    const margin = { top: 20, right: 30, bottom: 30, left: 60 };
+
+    const margin = { top: 20, right: 30, bottom: 30, left: 40 };
     const width = 500 - margin.left - margin.right;
     const height = 300 - margin.top - margin.bottom;
+
+    const barMargin = { top: 20, right: 30, bottom: 40, left: 40 };
+    const barWidth = 500 - barMargin.left - barMargin.right;
+    const barHeight = 300 - barMargin.top - barMargin.bottom;
 
     const svgs = [];
     const xScales = [];
@@ -90,15 +22,20 @@ document.addEventListener("DOMContentLoaded", function () {
     const tooltips = [];
     const hoverAreas = [];
 
-// *********************************************Initialize Single Line Plots*********************************************
+
+    // Define xBar outside the d3.csv block
+    const xBar = d3.scaleBand()
+        .domain(dataFiles.map(file => file.split('/').pop().split('_')[0])) // Extract file names
+        .range([0, barWidth])
+        .padding(0.1);
+        
+    // ***************************** Initialize Single Line Plots *****************************
 
     plots.forEach((plotId, index) => {
         const svg = d3.select(`#${plotId}`)
             .append("svg")
-            // .attr("width", width + margin.left + margin.right)
-            // .attr("height", height + margin.top + margin.bottom)
-            .attr("viewBox", `0 0 ${width + margin.left + margin.right} ${height + margin.top + margin.bottom}`)
-            .attr("preserveAspectRatio", "xMidYMid meet")
+            .attr("width", width + margin.left + margin.right)
+            .attr("height", height + margin.top + margin.bottom)
             .append("g")
             .attr("transform", `translate(${margin.left},${margin.top})`);
 
@@ -120,27 +57,10 @@ document.addEventListener("DOMContentLoaded", function () {
 
         svg.append("g")
             .attr("transform", `translate(0,${height})`)
-            .call(d3.axisBottom(xScale))
-            .append("text")
-            .attr("fill", "#000")
-            .attr("class", "axis-label")
-            .attr("x", width / 2)
-            .attr("y", margin.bottom + 10)
-            .style("text-anchor", "middle")
-            .style("font-size", "12px")
-            .text("CoPx");
+            .call(d3.axisBottom(xScale));
 
         svg.append("g")
-            .call(d3.axisLeft(yScale))
-            .append("text")
-            .attr("fill", "#000")
-            .attr("class", "axis-label")
-            .attr("transform", "rotate(-90)")
-            .attr("x", -height / 2)
-            .attr("y", -margin.left + 15)
-            .style("text-anchor", "middle")
-            .style("font-size", "12px")
-            .text("CoPy");
+            .call(d3.axisLeft(yScale));
 
         const path = svg.append("path")
             .attr("class", "line")
@@ -172,15 +92,13 @@ document.addEventListener("DOMContentLoaded", function () {
         hoverAreas.push(hoverArea);
     });
 
-// *********************************************Initialize Combined Line Plots*********************************************
+    // ***************************** Initialize Combined Plot *****************************
 
     lineplots.forEach((plotId, index) => {
         const svg = d3.select(`#${plotId}`)
             .append("svg")
-            // .attr("width", width + margin.left + margin.right)
-            // .attr("height", height + margin.top + margin.bottom)
-            .attr("viewBox", `0 0 ${width + margin.left + margin.right} ${height + margin.top + margin.bottom}`)
-            .attr("preserveAspectRatio", "xMidYMid meet")
+            .attr("width", width + margin.left + margin.right)
+            .attr("height", height + margin.top + margin.bottom)
             .append("g")
             .attr("transform", `translate(${margin.left},${margin.top})`);
 
@@ -202,27 +120,10 @@ document.addEventListener("DOMContentLoaded", function () {
 
         svg.append("g")
             .attr("transform", `translate(0,${height})`)
-            .call(d3.axisBottom(xScale))
-            .append("text")
-            .attr("fill", "#000")
-            .attr("class", "axis-label")
-            .attr("x", width / 2)
-            .attr("y", margin.bottom + 10)
-            .style("text-anchor", "middle")
-            .style("font-size", "12px")
-            .text("CoPx");
+            .call(d3.axisBottom(xScale));
 
         svg.append("g")
-            .call(d3.axisLeft(yScale))
-            .append("text")
-            .attr("fill", "#000")
-            .attr("class", "axis-label")
-            .attr("transform", "rotate(-90)")
-            .attr("x", -height / 2)
-            .attr("y", -margin.left + 15)
-            .style("text-anchor", "middle")
-            .style("font-size", "12px")
-            .text("CoPy");
+            .call(d3.axisLeft(yScale));
 
         const path = svg.append("path")
             .attr("class", "line")
@@ -254,13 +155,71 @@ document.addEventListener("DOMContentLoaded", function () {
         hoverAreas.push(hoverArea);
     });
 
-    // Load the data for each plot
-    const dataPromises = dataFiles.map(file => d3.csv(file));
+    // ***************************** Initialize Single Bar Chart *****************************
+
+    barPlots.forEach((barPlotId, index) => {
+        // Create the SVG element for the bar chart
+        const barSvg = d3.select(`#${barPlotId}`)
+            .append("svg")
+            .attr("width", barWidth + barMargin.left + barMargin.right)
+            .attr("height", barHeight + barMargin.top + barMargin.bottom)
+            .append("g")
+            .attr("transform", `translate(${barMargin.left},${barMargin.top})`);
+    
+        // Define xBar outside the d3.csv block
+        const xBar = d3.scaleBand()
+            .domain(dataFiles.map(file => file.split('/').pop().split('_')[0])) // Extract file names
+            .range([0, barWidth])
+            .padding(0.1);
+    
+        // Load the data for the bar chart
+        d3.csv(dataFiles[index]).then(data => {
+            // Extract the displacement values
+            const barData = data.map(d => ({
+                time: +d.time,
+                displacement: +d.displacement
+            }));
+    
+            const yBar = d3.scaleLinear()
+                .domain([0, d3.max(barData, d => d.displacement)])
+                .nice()
+                .range([barHeight, 0]);
+
+            // Add the x-axis to the bar chart
+            barSvg.append("g")
+                .attr("transform", `translate(0,${barHeight})`)
+                .call(d3.axisBottom(xBar));
+
+            // Add the y-axis to the bar chart
+            barSvg.append("g")
+                .attr("class", "y-axis")
+                .call(d3.axisLeft(yBar));
+
+            // Store the barData for later use
+            barSvg.datum(barData);
+        });
+    });
+
+    // ***************************** Load data *****************************
+
+    // const dataPromises = dataFiles.map(file => d3.csv(file));
+    const dataPromises = dataFiles.map(file => d3.csv(file, d => ({
+        time: +d.time,
+        CoPx: +d.CoPx,
+        CoPy: +d.CoPy,
+        displacement: +d.displacement,
+        Data1: +d.Data1,
+        Data2: +d.Data2,
+        Data3: +d.Data3,
+        Data4: +d.Data4
+    })));
 
     Promise.all(dataPromises).then(datasets => {
         console.log("Datasets loaded:", datasets); // Check if datasets are loaded correctly
 
-        // *********************************************Single Line Plot*********************************************
+        // **************************** Update the single plots ****************************
+
+        // Create separate sliders for each plot
         plots.forEach((plotId, index) => {
             const slider = d3.select(`#time-slider-${index + 1}`);
             const sliderValue = d3.select(`#slider-value-${index + 1}`);
@@ -375,7 +334,7 @@ document.addEventListener("DOMContentLoaded", function () {
             });
         });
 
-        // *********************************************COMBINED Line Plot*********************************************
+        // **************************** Update the combined plot ****************************
         // Create a combined slider for the final slide
         const combinedSlider = d3.select("#time-slider-combined");
         const combinedSliderValue = d3.select("#slider-value-combined");
@@ -491,188 +450,64 @@ document.addEventListener("DOMContentLoaded", function () {
             });
         });
 
-// *********************************************Initialize Bar Plots*********************************************
-        //get each data
-        const WL1 = datasets[0];
-        const WL2 = datasets[1];
-        const WN = datasets[2];
-        const WR = datasets[3];
+// **************************** Update the bar chart ****************************
 
-        //Last column
-        const WL1_work = extractLastColumn(WL1);
-        const WL2_work = extractLastColumn(WL2);
-        const WN_work = extractLastColumn(WN);
-        const WR_work = extractLastColumn(WR);
+            barPlots.forEach((barPlotId, index) => {
+                const slider = d3.select(`#time-slider-${index + 1}`);
+                const sliderValue = d3.select(`#slider-value-${index + 1}`);
 
-        //Second last column
-        const WL1_dis = extractSecondLast(WL1);
-        const WL2_dis = extractSecondLast(WL2);
-        const WN_dis = extractSecondLast(WN);
-        const WR_dis = extractSecondLast(WR);
+                slider.on("input", function () {
+                    const currentTime = +this.value;
+                    sliderValue.text(`${currentTime / 100}s`);
 
-        const maxValue = Math.max(...WN_dis);
+                    // Select the bar chart SVG
+                    const barSvg = d3.select(`#${barPlotId} svg g`);
+                    const barData = barSvg.datum();
 
-        //important numbers for setting up the bar graph
-        //Let idx be a parameter for the function.
-        //data.slice(0,idx), if idx is 3, it means we are plotting the
-        //first three data. Using location[idx] for the x location of data from 
-        //left to right. w[idx] tells us the width of each bar.
-        const data = [WL1_dis,WL2_dis,WN_dis,WR_dis];
-        const location = [[170], [105, 275], [85, 200, 315], [73, 161, 249, 337]];
-        const w = [100,60,40,30];
-        let labels = ["WL1", "WL2", "WN", "WR"];
-        // console.log(slider);
-        // console.log(sliderValueDisplay);
+                    // Filter data based on the current time
+                    const filteredData = barData.filter(d => d.time <= currentTime);
+                    console.log(`Filtered data for bar plot ${barPlotId}:`, filteredData); // Check the filtered data
 
-        //set up the dimension of bar
-        const barMargin = { top: 20, right: 30, bottom: 40, left: 40 };
-        const barWidth = 460 - barMargin.left - barMargin.right;
-        const barHeight = 310 - barMargin.top - barMargin.bottom;
-        
-        createBarChart(1, 0);
-        createBarChart(2, 0);
-        createBarChart(3, 0);
-        createBarChart(4, 0);
+                    // Extract the latest data point for the bar chart
+                    const latestData = filteredData.length > 0 ? filteredData[filteredData.length - 1] : null;
 
-        // Initialize sliders
-        setupSlider('time-slider-1', 'slider-value-1', 1);
-        setupSlider('time-slider-2', 'slider-value-2', 2);
-        setupSlider('time-slider-3', 'slider-value-3', 3);
-        setupSlider('time-slider-4', 'slider-value-4', 4);
-  
-        function setupSlider(sliderId, sliderValueDisplayId, chartIndex) {
-            const slider = document.getElementById(sliderId);
-            const sliderValueDisplay = document.getElementById(sliderValueDisplayId);
-    
-            slider.addEventListener('input', function () {
-                const index = parseInt(slider.value); // Get the current index from the slider
-                sliderValueDisplay.textContent = `${index}s`; // Show current slider value in seconds
-                // Update the bar chart with the new value from WL1[index]
-                createBarChart(chartIndex, index - 1);
+                    if (latestData) {
+                        const barData = [
+                            { file: 'WL1', value: latestData.displacement },
+                            { file: 'WL2', value: latestData.displacement },
+                            { file: 'WN', value: latestData.displacement },
+                            { file: 'WR', value: latestData.displacement }
+                        ];
+
+                    // Update the y scale domain
+                    const yBar = d3.scaleLinear()
+                        .domain([0, d3.max(barData, d => d.value)])
+                        .nice()
+                        .range([barHeight, 0]);
+
+                    // Update the bars
+                    const bars = barSvg.selectAll(".bar")
+                        .data(barData);
+
+                    bars.enter()
+                        .append("rect")
+                        .attr("class", "bar")
+                        .merge(bars)
+                        .attr("x", d => xBar(d.file))
+                        .attr("y", d => yBar(d.value))
+                        .attr("width", xBar.bandwidth())
+                        .attr("height", d => barHeight - yBar(d.value))
+                        .attr("fill", "steelblue");
+
+                    bars.exit().remove();
+
+                    // Update the y-axis
+                    barSvg.select(".y-axis")
+                        .transition()
+                        .duration(200)
+                        .call(d3.axisLeft(yBar));
+                }
             });
-        }
-
-        //choice means choosing slider, idx means one of the 6000 values.
-        function createBarChart(choice, idx){
-            const barChartContainer = d3.select(`#bar${choice}`);
-
-            //Remove any existing bars
-            barChartContainer.selectAll('*').remove();
-
-            // Set up the SVG container
-            const svg = barChartContainer.append("svg")
-                // .attr("width", barWidth) // Width of the chart
-                // .attr("height", barHeight); // Height of the chart
-                .attr("viewBox", `0 0 ${barWidth + margin.left + margin.right} ${barHeight + margin.top + margin.bottom}`)
-                .attr("preserveAspectRatio", "xMidYMid meet")
-
-            //slice the data based on idx to get the first 'choice' elements
-            const selectedData = data.slice(0,choice);
-            const selectedLocations = location[choice - 1];//get the locations of each bar
-            const selectedWidths = w[choice - 1];//get the width of corresponding number of bars
-
-            selectedData.forEach((dataSet, i) => {
-                svg.append('rect')
-                    .attr('class', `bar-${i}`)
-                    .attr('x', selectedLocations[i]) //use corresponding location
-                    .attr('y',barHeight - scaleHeight(dataSet[idx],maxValue)-barMargin.bottom)// - bottom) //select y location
-                    .attr('width', selectedWidths)
-                    .attr('height', scaleHeight(dataSet[idx],maxValue))
-                    .attr('fill', getBarColor(i));
-                //console.log(scaleHeight(dataSet[idx],maxValue));
-                //console.log(selectedWidths[i]);
-
-            });
-            createYAxisLabels(svg, maxValue);
-            // Create the X-axis
-            createXAxisLabels(svg, choice); // Create X-axis without scaling, based on categories
-        }
-
-        function scaleHeight(value, max) {
-            return (value / max) * (barHeight-barMargin.top-barMargin.bottom); // Scale the height of the bar relative to the max value
-        }
-
-        // Function to get the color for each bar (based on its dataset)
-        function getBarColor(j) {
-            const colors = [
-                "rgba(0, 0, 0, 0.6)", // For WL1
-                "rgba(22, 50, 50, 0.6)", // For WL2
-                "rgba(50, 50, 50, 0.6)", // For WN
-                "rgba(255, 255, 255, 0.6)" // For WR
-            ];
-            return colors[j]; // Use the color corresponding to the dataset
-        }
-
-        //   // Function to create Y-axis labels
-        function createYAxisLabels(svg, maxValue) {
-            const yTicks = 10; // Number of ticks for the y-axis
-
-            const yScale = d3.scaleLinear()
-            .domain([0.0, maxValue])
-            .range([barHeight-barMargin.bottom, barMargin.top]);
-
-            // Create Y-axis labels with ticks
-            const yAxis = d3.axisLeft(yScale).ticks(yTicks);
-
-            // Append the y-axis labels
-            svg.append("g")
-            .attr("class", "y-axis")
-            .attr("transform", `translate(${barMargin.left}, 0)`) // Position the axis on the left of the bars
-            .call(yAxis);
-                
-            // Add the Y-axis label
-            svg.append("text")
-            .attr("class", "axis-label")
-            .attr("transform", "rotate(-90)") // Rotate the label to be vertical
-            .attr("y", 10) // Position the label
-            .attr("x", -barHeight / 2) // Adjust this to position the label along the Y-axis
-            .style("text-anchor", "middle") // Center the label horizontally
-            .style("font-size", "12px")
-            .text("Displacement");
-        }
-
-        function createXAxisLabels(svg, idx){
-            const arr = labels.slice(0,idx)
-            const xScale = d3.scaleBand()
-                .domain(arr) //categories
-                .range([barMargin.left, barWidth]) //range of labels
-                .padding(0.1); //padding between bars
-
-            const xAxis = d3.axisBottom(xScale);
-
-            // Append the X-axis to the SVG
-            svg.append("g")
-                .attr("class", "x-axis")
-                .attr("transform", `translate(0, ${barHeight-barMargin.bottom})`) // Position X-axis at the bottom of the chart
-                .call(xAxis);
-
-            // Add X-axis label
-            svg.append("text")
-                .attr("class", "axis-label")
-                .attr("transform", `translate(${(barWidth+barMargin.left)/2}, ${barHeight-5})`)
-                .style("text-anchor", "middle")
-                .text("Environment")
-                .style("font-size", "12px");  // Adjust font size
-        }
+        });
     });
-
-    //Get the last columns from dataset
-    const extractLastColumn = (data) => {
-        // Iterate through each row and retrieve the value of the last column
-        return data.map(row => {
-            // Get the last key of the row, which corresponds to the last column
-            const lastColumnKey = Object.keys(row)[Object.keys(row).length - 1];
-            return row[lastColumnKey]; //Return the value of last column
-        })
-    }
-
-    //Get the second last columns from dataset
-    const extractSecondLast = (data) => {
-        // Iterate through each row and retrieve the value of the second last column
-        return data.map(row => {
-            // Get the last key of the row, which corresponds to the second last column
-            const secondLast = Object.keys(row)[Object.keys(row).length - 2];
-            return row[secondLast]; //Return the value of last column
-        })
-    }
 });
