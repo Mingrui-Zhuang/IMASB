@@ -22,6 +22,8 @@ function moveToNextSlide() {
 function moveToPreviousSlide() {
     const slides = document.querySelectorAll('.slide');
     let currentSlide = Array.from(slides).findIndex(slide => slide.style.display !== 'none');
+    if (currentSlide === 0){ return; }  // handle going from first slide to last slide
+
     slides[currentSlide].style.opacity = 0;
     setTimeout(() => {
         slides[currentSlide].style.display = 'none';
@@ -272,7 +274,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 const data = datasets[index];
 
                 const filteredData = data.filter(d => d.time <= currentTime);
-                console.log(`Filtered data for plot ${plotId}:`, filteredData); // Check the filtered data
+                // console.log(`Filtered data for plot ${plotId}:`, filteredData); // Check the filtered data
 
                 // Update the line path
                 paths[index].datum(filteredData)
@@ -388,7 +390,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 const data = datasets[index];
         
                 const filteredData = data.filter(d => d.time <= currentTime);
-                console.log(`Filtered data for plot ${plotId}:`, filteredData); // Check the filtered data
+                // console.log(`Filtered data for plot ${plotId}:`, filteredData); // Check the filtered data
         
                 // Update the line path
                 paths[index + plots.length].datum(filteredData)
@@ -497,7 +499,7 @@ document.addEventListener("DOMContentLoaded", function () {
         const WL2 = datasets[1];
         const WN = datasets[2];
         const WR = datasets[3];
-
+ 
         //Last column
         const WL1_work = extractLastColumn(WL1);
         const WL2_work = extractLastColumn(WL2);
@@ -546,13 +548,13 @@ document.addEventListener("DOMContentLoaded", function () {
     
             slider.addEventListener('input', function () {
                 const index = parseInt(slider.value); // Get the current index from the slider
-                sliderValueDisplay.textContent = `${index}s`; // Show current slider value in seconds
+                sliderValueDisplay.textContent = `${index/100}s`; // Show current slider value in seconds
                 // Update the bar chart with the new value from WL1[index]
                 createBarChart(chartIndex, index - 1);
             });
         }
 
-        //choice means choosing slider, idx means oen of the 6000 values.
+        //choice means choosing slider, idx means one of the 6000 values.
         function createBarChart(choice, idx){
             const barChartContainer = d3.select(`#bar${choice}`);
 
