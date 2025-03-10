@@ -377,46 +377,6 @@ document.addEventListener("DOMContentLoaded", function () {
             });
         });
 
-    
-    // Resize the plots when the window is resized
-    // window.addEventListener('resize', resizePlots);
-
-    // function resizePlots() {
-    //     const plots = document.querySelectorAll('.plot');
-    //     plots.forEach((plot, index) => {
-    //         if (xScales[index] && yScales[index]) {
-    //             const width = plot.clientWidth - margin.left - margin.right;
-    //             const height = plot.clientHeight - margin.top - margin.bottom;
-
-    //             // Update the SVG element dimensions
-    //             d3.select(plot).select('svg')
-    //                 .attr('width', width + margin.left + margin.right)
-    //                 .attr('height', height + margin.top + margin.bottom);
-
-    //             // Update the scales and axes
-    //             xScales[index].range([0, width]);
-    //             yScales[index].range([height, 0]);
-    //             d3.select(plot).select('.x-axis').call(d3.axisBottom(xScales[index]));
-    //             d3.select(plot).select('.y-axis').call(d3.axisLeft(yScales[index]));
-
-    //             // Update the line path
-    //             const data = paths[index].datum();
-    //             if (data) {
-    //                 paths[index].attr("d", lines[index](data));
-    //             }
-
-    //             // Update the dot position
-    //             const lastDataPoint = dots[index].datum();
-    //             if (lastDataPoint) {
-    //                 const cx = xScales[index](lastDataPoint.CoPx);
-    //                 const cy = yScales[index](lastDataPoint.CoPy);
-    //                 dots[index].attr("cx", cx).attr("cy", cy);
-    //                 hoverAreas[index].attr("cx", cx).attr("cy", cy);
-    //             }
-    //         }
-    //     });
-    // }
-
         //get each data
         const WL1 = datasets[0];
         const WL2 = datasets[1];
@@ -469,55 +429,56 @@ document.addEventListener("DOMContentLoaded", function () {
 
         slider1.addEventListener('input', function () {
             const index1 = parseInt(slider1.value); // Get the current index from the slider
-            sliderValueDisplay1.textContent = `${index1}s`; // Show current slider value in seconds
+            sliderValueDisplay1.textContent = `${index1/100}s`; // Show current slider value in seconds
             // Update the bar chart with the new value from WL1[index]
             createBarChart(1, index1-1);
             //updateBarChart(WL1_dis, index1-1, maxValue);//so it moves according to slider value
-          });
+        });
 
         const slider2 = document.getElementById('time-slider-2');
         const sliderValueDisplay2 = document.getElementById('slider-value-2');
 
         slider2.addEventListener('input', function () {
             const index2 = parseInt(slider2.value); // Get the current index from the slider
-            sliderValueDisplay2.textContent = `${index2}s`; // Show current slider value in seconds
+            sliderValueDisplay2.textContent = `${index2/100}s`; // Show current slider value in seconds
             //console.log(index1);
             //console.log(WL1_dis[index1-1]);
 
             // Update the bar chart with the new value from WL1[index]
             createBarChart(2, index2-1);
-          });
+        });
 
         const slider3 = document.getElementById('time-slider-3');
         const sliderValueDisplay3 = document.getElementById('slider-value-3');
   
         slider3.addEventListener('input', function () {
             const index3 = parseInt(slider3.value); // Get the current index from the slider
-            sliderValueDisplay3.textContent = `${index3}s`; // Show current slider value in seconds
+            sliderValueDisplay3.textContent = `${index3/100}s`; // Show current slider value in seconds
             //console.log(index1);
             //console.log(WL1_dis[index1-1]);
   
             // Update the bar chart with the new value from WL1[index]
             createBarChart(3, index3-1);
+        });
 
         const slider4 = document.getElementById('time-slider-4');
         const sliderValueDisplay4 = document.getElementById('slider-value-4');
       
         slider4.addEventListener('input', function () {
             const index4 = parseInt(slider4.value); // Get the current index from the slider
-            sliderValueDisplay4.textContent = `${index4}s`; // Show current slider value in seconds
+            sliderValueDisplay4.textContent = `${index4/100}s`; // Show current slider value in seconds
 
       
             // Update the bar chart with the new value from WL1[index]
             createBarChart(4, index4-1);
-            });
         });
+        
   
 
 
 
 
-        //choice means choosing slider, idx means oen of the 6000 values.
+        //choice means choosing slider, idx means one of the 6000 values.
         function createBarChart(choice, idx){
             const barChartContainer = d3.select(`#bar${choice}`);
 
