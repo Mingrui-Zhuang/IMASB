@@ -261,3 +261,14 @@ p {
     stroke-width: 1px;
     stroke-dasharray: 3, 3;
 }
+
+.play-pause-btn {
+    background-color: #ddd;
+    color: #333;
+    border: none;
+    padding: 0.5rem 1rem;
+    margin-left: 0.5rem;   /* space between the slider and each button */
+    cursor: pointer;
+    font-size: 0.9rem;
+    border-radius: 4px;    /* optional rounded corners */
+  }

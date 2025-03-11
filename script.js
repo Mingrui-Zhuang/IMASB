@@ -2,6 +2,7 @@
 let selectedSubject = '1';
 // ******************************************** Nagivation ****************************************************
 function moveToNextSlide() {
+    pauseCurrentSlideSliders();
     const slides = document.querySelectorAll('.slide');
     let currentSlide = Array.from(slides).findIndex(slide => slide.style.display !== 'none');
     slides[currentSlide].style.opacity = 0;
@@ -22,6 +23,7 @@ function moveToNextSlide() {
 }
 
 function moveToPreviousSlide() {
+    pauseCurrentSlideSliders();
     const slides = document.querySelectorAll('.slide');
     let currentSlide = Array.from(slides).findIndex(slide => slide.style.display !== 'none');
     if (currentSlide === 0){ return; }  // handle going from first slide to last slide
@@ -73,6 +75,102 @@ document.addEventListener('DOMContentLoaded', function() {
         slide.style.opacity = index === 0 ? 1 : 0;
     });
 });
+
+
+// *********************************************Initialize Slider Buttons*********************************************
+function setupSliderButtons(sliderId, sliderValueId) {
+    const slider = document.getElementById(sliderId);
+    const sliderValueDisplay = document.getElementById(sliderValueId);
+    const container = slider.parentNode;
+    // console.log(container)
+
+    // Initialize custom properties
+    slider.playIntervalId = null;
+    slider.isPlaying = false;
+
+    // Create Play button
+    const playBtn = document.createElement("button");
+    playBtn.textContent = "Play";
+    playBtn.classList.add("play-pause-btn", "play-button");
+    container.appendChild(playBtn);
+
+    // Create Pause button
+    const pauseBtn = document.createElement("button");
+    pauseBtn.textContent = "Pause";
+    pauseBtn.classList.add("play-pause-btn", "pause-button");
+    container.appendChild(pauseBtn);
+
+    // Create Rewind button
+    const rewindBtn = document.createElement("button");
+    rewindBtn.textContent = "Rewind";
+    rewindBtn.classList.add("play-pause-btn", "rewind-button");
+    container.appendChild(rewindBtn);
+
+    // // Variables to manage the interval
+    // let intervalId = null;
+    // let isPlaying = false;
+
+    // PLAY
+    playBtn.addEventListener("click", function() {
+        if (slider.isPlaying) return;  // Already playing
+        slider.isPlaying = true;
+        // Start incrementing the slider at a fixed interval (e.g., every 100ms)
+        slider.playIntervalId = setInterval(() => {
+            let currentValue = parseInt(slider.value);
+            // Increase the slider value by e.g. 50 each step
+            // so it takes (6000 / 50) * 100ms = 12s to go full range
+            if (currentValue < slider.max) {
+                currentValue += 50;
+                slider.value = currentValue;
+                // Update the displayed time
+                sliderValueDisplay.textContent = (currentValue / 100) + "s";
+                // Trigger the slider's input event to update your plots
+                slider.dispatchEvent(new Event("input"));
+            } else {
+                // If we reached the end, stop
+                clearInterval(slider.playIntervalId);
+                slider.isPlaying = false;
+            }
+        }, 100);
+    });
+
+    // PAUSE
+    pauseBtn.addEventListener("click", function() {
+        if (!slider.isPlaying) return;
+        clearInterval(slider.playIntervalId);
+        slider.isPlaying = false;
+    });
+
+    // REWIND: Reset the slider back to the beginning
+    rewindBtn.addEventListener("click", function() {
+        // Stop the play interval if it's running
+        if (slider.isPlaying) {
+            clearInterval(slider.playIntervalId);
+            slider.isPlaying = false;
+        }
+        // Reset slider value and display
+        // console.log(slider.min)
+        slider.value = slider.min;
+        sliderValueDisplay.textContent = "0s";
+        slider.dispatchEvent(new Event("input"));
+    });
+}
+
+function pauseCurrentSlideSliders() {
+    // Find the currently visible slide
+    const currentSlide = Array.from(document.querySelectorAll('.slide'))
+                              .find(slide => slide.style.display !== 'none');
+    if (!currentSlide) return;
+
+    // Find all slider elements in the current slide
+    const sliders = currentSlide.querySelectorAll('input[type="range"]');
+    sliders.forEach(slider => {
+        if (slider.isPlaying) {
+            clearInterval(slider.playIntervalId);
+            slider.isPlaying = false;
+        }
+    });
+}
 
 // ******************************************** Plots ****************************************************
 document.addEventListener("DOMContentLoaded", function () {
@@ -279,6 +377,20 @@ document.addEventListener("DOMContentLoaded", function () {
                 const filteredData = data.filter(d => d.time <= currentTime);
                 // console.log(`Filtered data for plot ${plotId}:`, filteredData); // Check the filtered data
 
+                // If no data or time=0, explicitly clear everything and exit early
+                if (filteredData.length === 0 || currentTime === 0) {
+                    // Clear the main path
+                    paths[index].datum([]).attr("d", null);
+                    // Remove any line segments
+                    svgs[index].selectAll(".line-segment").remove();
+                    // Hide dot & hover area
+                    dots[index].style("opacity", 0);
+                    hoverAreas[index].style("opacity", 0);
+                    // Remove old hover lines
+                    svgs[index].selectAll(".hover-line").remove();
+                    return; // Skip the rest of the logic
+                }
+
                 // Update the line path
                 // paths[index].datum(filteredData)
                 //     .attr("d", lines[index]);
@@ -314,28 +426,23 @@ document.addEventListener("DOMContentLoaded", function () {
                 }
 
                 // Update the dot position
-                if (filteredData.length > 0) {
-                    const lastDataPoint = filteredData[filteredData.length - 1];
-                    const cx = xScales[index](lastDataPoint.CoPx);
-                    const cy = yScales[index](lastDataPoint.CoPy);
+                const lastDataPoint = filteredData[filteredData.length - 1];
+                const cx = xScales[index](lastDataPoint.CoPx);
+                const cy = yScales[index](lastDataPoint.CoPy);
 
-                    if (cx >= 0 && cx <= width && cy >= 0 && cy <= height) {
-                        dots[index].datum(lastDataPoint)
-                            .attr("cx", cx)
-                            .attr("cy", cy)
-                            .style("opacity", 1)
-                            .raise();
+                if (cx >= 0 && cx <= width && cy >= 0 && cy <= height) {
+                    dots[index].datum(lastDataPoint)
+                        .attr("cx", cx)
+                        .attr("cy", cy)
+                        .style("opacity", 1)
+                        .raise();
 
-                        // Update the hover area position
-                        hoverAreas[index].datum(lastDataPoint)
-                            .attr("cx", cx)
-                            .attr("cy", cy)
-                            .raise();
+                    // Update the hover area position
+                    hoverAreas[index].datum(lastDataPoint)
+                        .attr("cx", cx)
+                        .attr("cy", cy)
+                        .raise();
 
-                    } else {
-                        dots[index].style("opacity", 0);
-                        hoverAreas[index].style("opacity", 0);
-                    }
                 } else {
                     dots[index].style("opacity", 0);
                     hoverAreas[index].style("opacity", 0);
@@ -390,14 +497,34 @@ document.addEventListener("DOMContentLoaded", function () {
             combinedSliderValue.text(`${currentTime / 100}s`);
         
             lineplots.forEach((plotId, index) => {
+                const offsetIndex = index + plots.length;
                 const data = datasets[index];
         
                 const filteredData = data.filter(d => d.time <= currentTime);
                 // console.log(`Filtered data for plot ${plotId}:`, filteredData); // Check the filtered data
         
+                // Early exit if no data or time=0
+                if (filteredData.length === 0 || currentTime === 0) {
+                    // Clear the main path
+                    paths[offsetIndex].datum([]).attr("d", null);
+
+                    // Remove any leftover line segments
+                    svgs[offsetIndex].selectAll(".line-segment").remove();
+
+                    // Hide the dot & hover area
+                    dots[offsetIndex].style("opacity", 0);
+                    hoverAreas[offsetIndex].style("opacity", 0);
+
+                    // Remove old hover lines
+                    svgs[offsetIndex].selectAll(".hover-line").remove();
+
+                    // Skip the rest of the logic for this plot
+                    return;
+                }
+        
                 // Update the line path
-                // paths[index + plots.length].datum(filteredData)
-                //     .attr("d", lines[index + plots.length]);
+                paths[offsetIndex].datum(filteredData)
+                    .attr("d", lines[offsetIndex]);
         
                 // Calculate the max time for normalization
                 const maxTime = d3.max(filteredData, d => +d.time);
@@ -409,8 +536,8 @@ document.addEventListener("DOMContentLoaded", function () {
                 }));
         
                 // Apply gradient effect based on time
-                // paths[index + plots.length].attr("stroke", "none"); // Reset stroke
-                svgs[index + plots.length].selectAll(".line-segment").remove(); // Remove old segments
+                paths[offsetIndex].attr("stroke", "none"); // Reset stroke
+                svgs[offsetIndex].selectAll(".line-segment").remove(); // Remove old segments
         
                 // Draw line segments with color based on time
                 for (let i = 1; i < normalizedData.length; i++) {
@@ -420,78 +547,74 @@ document.addEventListener("DOMContentLoaded", function () {
                     // Interpolate color based on normalized time
                     const color = d3.interpolateRgb("lightblue", "darkblue")(segmentTime);
         
-                    svgs[index + plots.length].append("path")
+                    svgs[offsetIndex].append("path")
                         .datum(segmentData)
                         .attr("class", "line-segment")
-                        .attr("d", lines[index + plots.length])
+                        .attr("d", lines[offsetIndex])
                         .attr("stroke", color)
                         .attr("stroke-width", 2)
                         .attr("fill", "none");
                 }
         
                 // Update the dot position
-                if (filteredData.length > 0) {
-                    const lastDataPoint = filteredData[filteredData.length - 1];
-                    const cx = xScales[index + plots.length](lastDataPoint.CoPx);
-                    const cy = yScales[index + plots.length](lastDataPoint.CoPy);
-        
-                    if (cx >= 0 && cx <= width && cy >= 0 && cy <= height) {
-                        dots[index + plots.length].datum(lastDataPoint)
-                            .attr("cx", cx)
-                            .attr("cy", cy)
-                            .style("opacity", 1)
-                            .raise();
-        
-                        // Update the hover area position
-                        hoverAreas[index + plots.length].datum(lastDataPoint)
-                            .attr("cx", cx)
-                            .attr("cy", cy)
-                            .raise();
-        
-                    } else {
-                        dots[index + plots.length].style("opacity", 0);
-                        hoverAreas[index + plots.length].style("opacity", 0);
-                    }
+                const lastDataPoint = filteredData[filteredData.length - 1];
+                const cx = xScales[offsetIndex](lastDataPoint.CoPx);
+                const cy = yScales[offsetIndex](lastDataPoint.CoPy);
+    
+                if (cx >= 0 && cx <= width && cy >= 0 && cy <= height) {
+                    dots[offsetIndex].datum(lastDataPoint)
+                        .attr("cx", cx)
+                        .attr("cy", cy)
+                        .style("opacity", 1)
+                        .raise();
+    
+                    // Update the hover area position
+                    hoverAreas[offsetIndex].datum(lastDataPoint)
+                        .attr("cx", cx)
+                        .attr("cy", cy)
+                        .raise();
+    
                 } else {
-                    dots[index + plots.length].style("opacity", 0);
-                    hoverAreas[index + plots.length].style("opacity", 0);
+                    dots[offsetIndex].style("opacity", 0);
+                    hoverAreas[offsetIndex].style("opacity", 0);
                 }
         
                 // Remove old hover lines
-                svgs[index + plots.length].selectAll(".hover-line").remove();
+                svgs[offsetIndex].selectAll(".hover-line").remove();
         
                 // Add tooltips to the dots
-                hoverAreas[index + plots.length].on("mouseover", function (event, d) {
+                hoverAreas[offsetIndex]
+                    .on("mouseover", function (event, d) {
                         const CoPx = parseFloat(d.CoPx).toFixed(5);
                         const CoPy = parseFloat(d.CoPy).toFixed(5);
                         const displacement = parseFloat(d.displacement).toFixed(5);
         
                         // Show the tooltip
-                        tooltips[index + plots.length].style("opacity", 1)
+                        tooltips[offsetIndex].style("opacity", 1)
                             .html(`CoPx: ${CoPx}<br>CoPy: ${CoPy}<br>Displacement: ${displacement}`)
                             .style("left", `${event.pageX + 5}px`)
                             .style("top", `${event.pageY + 5}px`);
         
                         // Add hover lines
-                        svgs[index + plots.length].append("line")
+                        svgs[offsetIndex].append("line")
                             .attr("class", "hover-line")
-                            .attr("x1", xScales[index + plots.length](d.CoPx))
-                            .attr("y1", yScales[index + plots.length](d.CoPy))
-                            .attr("x2", xScales[index + plots.length](d.CoPx))
+                            .attr("x1", xScales[offsetIndex](d.CoPx))
+                            .attr("y1", yScales[offsetIndex](d.CoPy))
+                            .attr("x2", xScales[offsetIndex](d.CoPx))
                             .attr("y2", height)
                             .attr("stroke", "#000");
         
-                        svgs[index + plots.length].append("line")
+                        svgs[offsetIndex].append("line")
                             .attr("class", "hover-line")
-                            .attr("x1", xScales[index + plots.length](d.CoPx))
-                            .attr("y1", yScales[index + plots.length](d.CoPy))
+                            .attr("x1", xScales[offsetIndex](d.CoPx))
+                            .attr("y1", yScales[offsetIndex](d.CoPy))
                             .attr("x2", 0)
-                            .attr("y2", yScales[index + plots.length](d.CoPy))
+                            .attr("y2", yScales[offsetIndex](d.CoPy))
                             .attr("stroke", "#000");
                     })
                     .on("mouseout", function () {
-                        tooltips[index + plots.length].style("opacity", 0);
-                        svgs[index + plots.length].selectAll(".hover-line").remove();
+                        tooltips[offsetIndex].style("opacity", 0);
+                        svgs[offsetIndex].selectAll(".hover-line").remove();
                     });
             });
         });
@@ -566,7 +689,8 @@ document.addEventListener("DOMContentLoaded", function () {
                 const index = parseInt(slider.value); // Get the current index from the slider
                 sliderValueDisplay.textContent = `${index/100}s`; // Show current slider value in seconds
                 // Update the bar chart with the new value from WL1[index]
-                createBarChart(data, chartIndex, index - 1, name);
+                const safeIndex = Math.max(0, index - 1);
+                createBarChart(data, chartIndex, safeIndex, name);
             });
         }
 
@@ -754,6 +878,13 @@ document.addEventListener("DOMContentLoaded", function () {
         })
     }
 });
+
+
+setupSliderButtons("time-slider-1", "slider-value-1");
+setupSliderButtons("time-slider-2", "slider-value-2");
+setupSliderButtons("time-slider-3", "slider-value-3");
+setupSliderButtons("time-slider-4", "slider-value-4");
+setupSliderButtons("time-slider-combined", "slider-value-combined");
 
 // ------------------------------------- Subject Selection -----------------------------------------
 const container = document.getElementById('plots-container-combined');
