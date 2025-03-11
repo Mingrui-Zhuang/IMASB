@@ -210,6 +210,7 @@ document.addEventListener("DOMContentLoaded", function () {
     // const tooltips = [];
     // const hoverAreas = [];
 
+
 // *********************************************Initialize Single Line Plots*********************************************
 
     plots.forEach((plotId, index) => {
@@ -638,22 +639,22 @@ document.addEventListener("DOMContentLoaded", function () {
 
 // *********************************************Initialize Bar Plots*********************************************
         //get each data
-        const WL1 = datasets[0];
-        const WL2 = datasets[1];
-        const WN = datasets[2];
-        const WR = datasets[3];
+        const WN = datasets[0];
+        const WR = datasets[1];
+        const WL1 = datasets[2];
+        const WL2 = datasets[3];
  
         //Last column
-        const WL1_work = extractLastColumn(WL1);
-        const WL2_work = extractLastColumn(WL2);
         const WN_work = extractLastColumn(WN);
         const WR_work = extractLastColumn(WR);
+        const WL1_work = extractLastColumn(WL1);
+        const WL2_work = extractLastColumn(WL2);
 
         //Second last column
-        const WL1_dis = extractSecondLast(WL1);
-        const WL2_dis = extractSecondLast(WL2);
         const WN_dis = extractSecondLast(WN);
         const WR_dis = extractSecondLast(WR);
+        const WL1_dis = extractSecondLast(WL1);
+        const WL2_dis = extractSecondLast(WL2);
 
         const maxValue = Math.max(...WL1_dis); //measure the largest displacement value of four datasets
         const maxForce = Math.max(...WL1_work); //measuer the largest 
@@ -663,11 +664,11 @@ document.addEventListener("DOMContentLoaded", function () {
         //data.slice(0,idx), if idx is 3, it means we are plotting the
         //first three data. Using location[idx] for the x location of data from 
         //left to right. w[idx] tells us the width of each bar.
-        const data1 = [WL1_dis,WL2_dis,WN_dis,WR_dis];
-        const data2 = [WL1_work, WL2_work, WN_work, WR_work];
+        const data1 = [WN_dis,WR_dis,WL1_dis,WL2_dis];
+        const data2 = [WN_work, WR_work, WL1_work, WL2_work];
         const location = [[170], [105, 275], [85, 200, 315], [73, 161, 249, 337]];
         const w = [100,60,40,30];
-        let labels = ["WL1", "WL2", "WN", "WR"];
+        let labels = ["WN", "WR", "WL1", "WL2"];
         // console.log(slider);
         // console.log(sliderValueDisplay);
 
