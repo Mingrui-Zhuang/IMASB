@@ -119,19 +119,19 @@ function setupSliderButtons(sliderId, sliderValueId, audioIndex) {
 
     // Create Play button
     const playBtn = document.createElement("button");
-    playBtn.textContent = "Play";
+    playBtn.textContent = "▶️";
     playBtn.classList.add("play-pause-btn", "play-button");
     container.appendChild(playBtn);
 
     // Create Pause button
     const pauseBtn = document.createElement("button");
-    pauseBtn.textContent = "Pause";
+    pauseBtn.textContent = "⏸️";
     pauseBtn.classList.add("play-pause-btn", "pause-button");
     container.appendChild(pauseBtn);
 
     // Create Rewind button
     const rewindBtn = document.createElement("button");
-    rewindBtn.textContent = "Rewind";
+    rewindBtn.textContent = "⏪️";
     rewindBtn.classList.add("play-pause-btn", "rewind-button");
     container.appendChild(rewindBtn);
 
@@ -927,13 +927,13 @@ setupSliderButtons("time-slider-4", "slider-value-4", 3);
 setupSliderButtons("time-slider-combined", "slider-value-combined");
 
 // ------------------------------------- Subject Selection -----------------------------------------
-const container = document.getElementById('plots-container-combined');
+const container = document.getElementById('main-content');
 
 container.querySelectorAll('button').forEach(button => {
     button.addEventListener('click',(event)=>{
         if (event.target.attr === 'selectedSubject'){ return;}
         else{
-            const container = document.getElementById('plots-container-combined');
+            const container = document.getElementById('main-content');
             container.querySelectorAll('button').forEach(button => {
                 button.setAttribute('class', 'choiceBtn');
             });

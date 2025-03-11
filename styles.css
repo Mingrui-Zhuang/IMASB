@@ -1,8 +1,24 @@
+:root {
+    --bg-color: #e9e4d4;
+    --text-color: #443e46;
+    --link-color: #1247aa;
+    --link-hover-color: #3e36d1;
+    --button-bg-color: #4174d3;
+    --button-hover-bg-color: #ff5B60;
+    --button-text-color: #e9e4d4;
+    --border-color: #210303;
+}
+
 body, html {
     margin: 0;
     padding: 0;
     height: 100%;
     overflow: hidden; /* Prevent scrolling beyond the slides */
+    color: var(--text-color);
+}
+
+.slide {
+    background-color: var(--bg-color); /* Replace with your desired background color */
 }
 
 h1 {
@@ -12,27 +28,22 @@ h1 {
 }
 
 h2 {
-    padding:20px;
-    text-align: left;
-    margin-bottom: 0;
-    margin-left: 100px;
+    text-align: center;
+    padding: 50px 20px 0px 20px;
 }
 
 h3 {
     text-align: left;
-    padding:20px;
-    margin-top: 0;
-    margin-bottom: 20px;
-    margin-left: 100px;
+    padding: 10px 0px 0px 50px;
 }
 
 a {
-    color: #1247aa; /* Default link color */
+    color: var(--link-color); /* Default link color */
     text-decoration: none; /* Remove underline */
 }
 
 a:hover {
-    color: #3e36d1; /* Color on hover */
+    color: var(--link-hover-color); /* Color on hover */
     text-decoration: underline; /* Underline on hover */
 }
 
@@ -62,20 +73,11 @@ p {
     scroll-snap-align: start;
 }
 
-#slide1 { background-color: #e37165; }
-#slide2 { background-color: #9e69b3; }
-#slide3 { background-color: #58a4d7; }
-#slide4 { background-color: #4dc880; }
-#slide5 { background-color: #f0d259; }
-
-
 #nextBtn {
     position: absolute;
     bottom: 20px; /* Adjust the distance from the bottom as needed */
     left: 50%;
     transform: translateX(-50%);
-    background-color: rgba(0, 0, 0, 0.5);
-    color: white;
     border: none;
     padding: 10px 20px;
     cursor: pointer;
@@ -96,6 +98,7 @@ p {
     flex-direction: row; /* Ensure items are in the same row */
     margin-bottom: 20px;
     gap: 1em;
+    margin-right: 30px;
 }
 
 /* Sliders */
@@ -107,10 +110,8 @@ p {
     width: 70%;
     display: block;
     margin-left: 20%; 
-    /* transform: translateX(-48%); */
 }
 
-/* Slider values */
 #slider-value-1,
 #slider-value-2,
 #slider-value-3,
@@ -121,7 +122,19 @@ p {
     width: 30%;
 }
 
-/* Plot containers */
+.play-pause-btn {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    border: none;
+    margin-left: 0;   /* space between the slider and each button */
+    cursor: pointer;
+    font-size: 0.9rem;
+    border-radius: 4px;
+    margin-right: 20px;
+    font-size: 1.5rem;
+}
+
+/* Plot */
 #plots-container-1,
 #plots-container-2,
 #plots-container-3,
@@ -132,6 +145,7 @@ p {
     gap: 20px;
 }
 
+/* Plot position */
 .lineplot{
     margin-left: 50px;
     padding: 10px;
@@ -159,6 +173,7 @@ p {
     height: 300px;
 }
 
+/* Plot scale */
 .plot svg {
     width: 100%;
     height: 100%;
@@ -174,6 +189,65 @@ p {
     height: 350px; /* Adjust the height as needed */
 }
 
+.plot- {
+    width: 400px;
+    height: 300px;
+    margin-bottom: 20px;
+    border: 1px solid var(--text-color);
+    position: relative;
+}
+
+/* Final slide button */
+#main-content {
+    display: flex;
+    width: 100%;
+}
+
+#buttons-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 30px;
+    margin-bottom: 20px;
+    padding: 10px;
+    margin-left: 30px;
+    padding-right: 20px;
+    padding-top: 20px;
+}
+
+.choiceBtn {
+    color: var(--bg-color);
+    background-color: var(--button-bg-color);
+    padding: 10px 20px;
+    cursor: pointer;
+    font-size: 1rem;
+    width: auto;
+    height: auto;
+    border: none;
+    height: 70px;
+    border-radius: 8px;
+}
+
+.selectedSubject {
+    color: var(--bg-color);
+    background-color: var(--button-hover-bg-color);
+    padding: 10px 20px;
+    cursor: pointer;
+    font-size: 1rem;
+    width: auto;
+    height: auto;
+    border: none;
+    height: 70px;
+    border-radius: 8px;
+}
+
+.choiceBtn:hover, .selectedSubject:hover {
+    transform: scale(1.1);
+    background-color: var(--button-hover-bg-color);
+    transition: 0.3s;
+}
+
 #plots-container-combined {
     margin-left: 20px;
     width: 100%;
@@ -181,52 +255,10 @@ p {
     grid-template-columns: 1fr 1fr 1fr;
     gap: 20px;
     justify-items: center;
+    flex-grow: 1;
 }
 
-.plot- {
-    width: 400px;
-    height: 300px;
-    margin-bottom: 20px;
-    border: 1px solid #210303;
-    position: relative;
-}
-
-.choiceBtn {
-    bottom: 20px; /* Adjust the distance from the bottom as needed */
-    left: 50%;
-    background-color: rgba(0, 0, 0, 0.5);
-    color: white;
-    border: none;
-    padding-top: 10px;
-    padding-bottom: 20px;
-    cursor: pointer;
-    font-size: 1rem;
-    width: 20%;
-    height: 10%;
-}
-
-.choiceBtn:hover {
-    transform: scale(1.5);
-}
-
-.selectedSubject {
-    bottom: 20px; /* Adjust the distance from the bottom as needed */
-    left: 50%;
-    background-color: #1247aa;
-    color: white;
-    border: none;
-    padding-top: 10px;
-    padding-bottom: 20px;
-    cursor: pointer;
-    font-size: 1rem;
-    width: 20%;
-    height: 10%;
-}
-
-.selectedSubject:hover {
-    transform: scale(1.5);
-}
-
+/* Line plot tooltip */
 .tooltip {
     position: absolute;
     /* position: relative; */
@@ -235,7 +267,7 @@ p {
     height: auto;
     padding: 5px;
     font: 12px sans-serif;
-    background: rgb(125, 173, 232);
+    background: var(--button-bg-color);
     border: 0px;
     border-radius: 8px;
     pointer-events: none;
@@ -257,18 +289,7 @@ p {
 } */
 
 .hover-line {
-    stroke: #000;
+    stroke: var(--border-color);
     stroke-width: 1px;
     stroke-dasharray: 3, 3;
 }
-
-.play-pause-btn {
-    background-color: #ddd;
-    color: #333;
-    border: none;
-    padding: 0.5rem 1rem;
-    margin-left: 0.5rem;   /* space between the slider and each button */
-    cursor: pointer;
-    font-size: 0.9rem;
-    border-radius: 4px;    /* optional rounded corners */
-  }
