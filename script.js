@@ -739,23 +739,31 @@ document.addEventListener("DOMContentLoaded", function () {
         createBarChart(data1, 2, 0, 'bar');
         createBarChart(data1, 3, 0, 'bar');
         createBarChart(data1, 4, 0, 'bar');
+        //create final bar chart
+        createBarChart(data1, 5, 0, 'bar');
         //create force graph
         createBarChart(data2, 1, 0, 'forceBar');
         createBarChart(data2, 2, 0, 'forceBar');
         createBarChart(data2, 3, 0, 'forceBar');
         createBarChart(data2, 4, 0, 'forceBar');
+        //create final bar chart
+        createBarChart(data2, 5, 0, 'forceBar');
 
         // Initialize sliders
         setupSlider(data1, 'time-slider-1', 'slider-value-1', 1, 'bar');
         setupSlider(data1, 'time-slider-2', 'slider-value-2', 2, 'bar');
         setupSlider(data1, 'time-slider-3', 'slider-value-3', 3, 'bar');
         setupSlider(data1, 'time-slider-4', 'slider-value-4', 4, 'bar');
+        //Final slider
+        setupSlider(data1, 'time-slider-combined', 'slider-value-combined', 5, 'bar');
 
         // Initialize sliders
         setupSlider(data2, 'time-slider-1', 'slider-value-1', 1, 'forceBar');
         setupSlider(data2, 'time-slider-2', 'slider-value-2', 2, 'forceBar');
         setupSlider(data2, 'time-slider-3', 'slider-value-3', 3, 'forceBar');
         setupSlider(data2, 'time-slider-4', 'slider-value-4', 4, 'forceBar');
+        //Final slider
+        setupSlider(data2, 'time-slider-combined', 'slider-value-combined', 5, 'forceBar');
   
         function setupSlider(data,sliderId, sliderValueDisplayId, chartIndex, name) {
             const slider = document.getElementById(sliderId);
@@ -776,6 +784,10 @@ document.addEventListener("DOMContentLoaded", function () {
 
             // console.log(`${name + choice}`);
             const barChartContainer = d3.select(`#${name+choice}`);
+            //for final slider
+            if (choice === 5){
+                choice = 4;
+            }
 
             //Remove any existing bars
             barChartContainer.selectAll('*').remove();
