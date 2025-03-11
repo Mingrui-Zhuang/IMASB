@@ -599,6 +599,26 @@ document.addEventListener("DOMContentLoaded", function () {
                         .attr('fill', getBarColor(i));
                     //console.log(scaleHeight(dataSet[idx],maxValue));
                     //console.log(selectedWidths[i]);
+                    if (i === choice - 1){ //add current
+                        svg.append('text')
+                        .attr('x', selectedLocations[i]+selectedWidths/2) // Center the text on top and center of the bar
+                        .attr('y', barHeight - scaleHeight(dataSet[idx],maxValue)-barMargin.bottom - 10) // 10px above the top of the bar
+                        .attr('text-anchor', 'middle') // Center the text horizontally
+                        .attr('fill', getBarColor(i)) // Text color
+                        .attr('font-size', '13px') // Set the font size to 5px
+                        .attr('font-weight', 'bold') // Make the text bold
+                        .attr('font-family', 'Arial, Helvetica, sans-serif')  // List of fallback fonts
+                        .text(`Current: ${Math.round(dataSet[idx]*10000)/10000}`); // Display the value
+                    }
+                    else{
+                        svg.append('text')
+                        .attr('x', selectedLocations[i]+selectedWidths/2) // Center the text on top and center of the bar
+                        .attr('y', barHeight - scaleHeight(dataSet[idx],maxValue)-barMargin.bottom - 10) // 10px above the top of the bar
+                        .attr('text-anchor', 'middle') // Center the text horizontally
+                        .attr('fill', getBarColor(i)) // Text color
+                        .attr('font-size', '12px') // Set the font size to 5px
+                        .text(Math.round(dataSet[idx]*10000)/10000); // Display the value
+                    }
 
                 });
                 createYAxisLabels(svg, maxValue, 'displacement'); //create unique y-label
@@ -614,6 +634,26 @@ document.addEventListener("DOMContentLoaded", function () {
                         .attr('fill', getBarColor(i));
                     //console.log(scaleHeight(dataSet[idx],maxValue));
                     //console.log(selectedWidths[i]);
+                    if (i === choice - 1){ //add current
+                        svg.append('text')
+                        .attr('x', selectedLocations[i]+selectedWidths/2) // Center the text on top and center of the bar
+                        .attr('y', barHeight - scaleHeight(dataSet[idx],maxForce)-barMargin.bottom - 10) // 10px above the top of the bar
+                        .attr('text-anchor', 'middle') // Center the text horizontally
+                        .attr('fill', getBarColor(i)) // Text color
+                        .attr('font-size', '13px') // Set the font size to 5px
+                        .attr('font-weight', 'bold') // Make the text bold
+                        .attr('font-family', 'Arial, Helvetica, sans-serif')  // List of fallback fonts
+                        .text(`Current: ${Math.round(dataSet[idx]*100)/100}`); // Display the value
+                    }
+                    else{
+                        svg.append('text')
+                        .attr('x', selectedLocations[i]+selectedWidths/2) // Center the text on top and center of the bar
+                        .attr('y', barHeight - scaleHeight(dataSet[idx],maxForce)-barMargin.bottom - 10) // 10px above the top of the bar
+                        .attr('text-anchor', 'middle') // Center the text horizontally
+                        .attr('fill', getBarColor(i)) // Text color
+                        .attr('font-size', '12px') // Set the font size to 5px
+                        .text(Math.round(dataSet[idx]*100)/100); // Display the value
+                    }
 
                 });
                 createYAxisLabels(svg, maxForce, 'Work'); //create unique y-label                
