@@ -156,7 +156,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         const hoverArea = svg.append("circle")
             .attr("class", "hover-area")
-            .attr("r", 30) // Larger radius for the hover area
+            .attr("r", 10) // Larger radius for the hover area
             .style("opacity", 0) // Make it invisible
             .style("pointer-events", "all"); // Ensure it can trigger events
 
@@ -350,8 +350,8 @@ document.addEventListener("DOMContentLoaded", function () {
                         // Show the tooltip
                         tooltips[index].style("opacity", 1)
                             .html(`CoPx: ${CoPx}<br>CoPy: ${CoPy}<br>Displacement: ${displacement}`)
-                            .style("left", `${event.pageX + 10}px`)
-                            .style("top", `${event.pageY + 10}px`);
+                            .style("left", `${event.pageX + 5}px`)
+                            .style("top", `${event.pageY + 5}px`);
 
                         // Add hover lines
                         svgs[index].append("line")
@@ -466,8 +466,8 @@ document.addEventListener("DOMContentLoaded", function () {
                         // Show the tooltip
                         tooltips[index + plots.length].style("opacity", 1)
                             .html(`CoPx: ${CoPx}<br>CoPy: ${CoPy}<br>Displacement: ${displacement}`)
-                            .style("left", `${event.pageX + 10}px`)
-                            .style("top", `${event.pageY + 10}px`);
+                            .style("left", `${event.pageX + 5}px`)
+                            .style("top", `${event.pageY + 5}px`);
         
                         // Add hover lines
                         svgs[index + plots.length].append("line")

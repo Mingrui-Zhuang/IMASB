@@ -175,15 +175,16 @@ button {
 }
 
 #plots-container-combined {
+    margin-left: 20px;
     width: 100%;
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: 1fr 1fr 1fr;
     gap: 20px;
     justify-items: center;
 }
 
 .plot- {
-    width: 100%;
+    width: 400px;
     height: 300px;
     margin-bottom: 20px;
     border: 1px solid #210303;
@@ -191,8 +192,8 @@ button {
 }
 
 .tooltip {
-    /* position: absolute; */
-    position: relative;
+    position: absolute;
+    /* position: relative; */
     text-align: center;
     width: 150px;
     height: auto;
