@@ -4,6 +4,7 @@ let selectedSubject = '1';
 const dataFiles = ["data/1/WN_clean.csv", "data/1/WR_clean.csv", "data/1/WL1_clean.csv", "data/1/WL2_clean.csv"];
 const plots = ["plot1", "plot2", "plot3", "plot4"];
 const lineplots = ["plot-1", "plot-2", "plot-3", "plot-4"];
+const audioSources = [null, "./excerpts/unmodified.wav", "./excerpts/modulated_0.1Hz.wav", "./excerpts/modulated_0.25Hz.wav"];
 
 const titles = ["WN", "WR", "WL1", "WL2"];
 const margin = { top: 20, right: 30, bottom: 30, left: 60 };
@@ -70,18 +71,15 @@ let isScrolling = false;
 function handleWheelEvent(event) {
     if (isScrolling) return;
     isScrolling = true;
-
     if (event.deltaY > 0) {
         moveToNextSlide();
     } else if (event.deltaY < 0) {
         moveToPreviousSlide();
     }
-
     setTimeout(() => {
         isScrolling = false;
     }, 2000); // Adjust the timeout duration as needed
 }
-
 document.addEventListener('wheel', handleWheelEvent);
 
 // Initialize the first slide to be visible
@@ -94,17 +92,30 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
-
 // *********************************************Initialize Slider Buttons*********************************************
-function setupSliderButtons(sliderId, sliderValueId) {
+function setupSliderButtons(sliderId, sliderValueId, audioIndex) {
     const slider = document.getElementById(sliderId);
     const sliderValueDisplay = document.getElementById(sliderValueId);
     const container = slider.parentNode;
-    // console.log(container)
 
     // Initialize custom properties
     slider.playIntervalId = null;
     slider.isPlaying = false;
+
+    // Create an Audio object
+    let audio = null;
+    if (audioSources[audioIndex]) {
+        audio = new Audio(audioSources[audioIndex]);
+    }
+    slider.audio = audio;
+
+    slider.addEventListener("input", function() {
+        const currentValue = +this.value;
+        sliderValueDisplay.textContent = (currentValue / 100) + "s";
+        if (slider.isPlaying && slider.audio) {
+            slider.audio.currentTime = currentValue / 100;
+        }
+    });
 
     // Create Play button
     const playBtn = document.createElement("button");
@@ -124,21 +135,15 @@ function setupSliderButtons(sliderId, sliderValueId) {
     rewindBtn.classList.add("play-pause-btn", "rewind-button");
     container.appendChild(rewindBtn);
 
-    // // Variables to manage the interval
-    // let intervalId = null;
-    // let isPlaying = false;
-
     // PLAY
     playBtn.addEventListener("click", function() {
         if (slider.isPlaying) return;  // Already playing
         slider.isPlaying = true;
-        // Start incrementing the slider at a fixed interval (e.g., every 100ms)
         slider.playIntervalId = setInterval(() => {
             let currentValue = parseInt(slider.value);
-            // Increase the slider value by e.g. 50 each step
-            // so it takes (6000 / 50) * 100ms = 12s to go full range
+            // Increase the slider value by e.g. 10 each step
             if (currentValue < slider.max) {
-                currentValue += 50;
+                currentValue += 10;
                 slider.value = currentValue;
                 // Update the displayed time
                 sliderValueDisplay.textContent = (currentValue / 100) + "s";
@@ -150,6 +155,12 @@ function setupSliderButtons(sliderId, sliderValueId) {
                 slider.isPlaying = false;
             }
         }, 100);
+        if (slider.audio) {
+            // Sync the audio's currentTime to the slider value
+            slider.audio.currentTime = slider.value / 100;
+            slider.audio.playbackRate = 1;
+            slider.audio.play();
+        }
     });
 
     // PAUSE
@@ -157,6 +168,7 @@ function setupSliderButtons(sliderId, sliderValueId) {
         if (!slider.isPlaying) return;
         clearInterval(slider.playIntervalId);
         slider.isPlaying = false;
+        if (slider.audio) {slider.audio.pause();}
     });
 
     // REWIND: Reset the slider back to the beginning
@@ -167,10 +179,13 @@ function setupSliderButtons(sliderId, sliderValueId) {
             slider.isPlaying = false;
         }
         // Reset slider value and display
-        // console.log(slider.min)
         slider.value = slider.min;
         sliderValueDisplay.textContent = "0s";
         slider.dispatchEvent(new Event("input"));
+        if (slider.audio) {
+            slider.audio.currentTime = 0;
+            slider.audio.pause();
+        }
     });
 }
 
@@ -187,29 +202,14 @@ function pauseCurrentSlideSliders() {
             clearInterval(slider.playIntervalId);
             slider.isPlaying = false;
         }
+        if (slider.audio) {
+            slider.audio.pause();
+        }
     });
 }
 
 // ******************************************** Plots ****************************************************
 document.addEventListener("DOMContentLoaded", function () {
-    // const dataFiles = ["data/1/WL1_clean.csv", "data/1/WL2_clean.csv", "data/1/WN_clean.csv", "data/1/WR_clean.csv"];
-    // const plots = ["plot1", "plot2", "plot3", "plot4"];
-    // const lineplots = ["plot-1", "plot-2", "plot-3", "plot-4"];
-
-    // const titles = ["WL1", "WL2", "WN", "WR"];
-    // const margin = { top: 20, right: 30, bottom: 30, left: 60 };
-    // const width = 500 - margin.left - margin.right;
-    // const height = 300 - margin.top - margin.bottom;
-
-    // const svgs = [];
-    // const xScales = [];
-    // const yScales = [];
-    // const lines = [];
-    // const paths = [];
-    // const dots = [];
-    // const tooltips = [];
-    // const hoverAreas = [];
-
 
 // *********************************************Initialize Single Line Plots*********************************************
 
@@ -389,6 +389,9 @@ document.addEventListener("DOMContentLoaded", function () {
             slider.on("input", function () {
                 const currentTime = +this.value;
                 sliderValue.text(`${currentTime / 100}s`);
+                if (slider.audio) {
+                    slider.audio.currentTime = currentTime / 100;
+                }
 
                 const data = datasets[index];
 
@@ -723,7 +726,8 @@ document.addEventListener("DOMContentLoaded", function () {
     
             slider.addEventListener('input', function () {
                 const index = parseInt(slider.value); // Get the current index from the slider
-                sliderValueDisplay.textContent = `${index/100}s`; // Show current slider value in seconds
+                const currentTimeSec = +this.value / 100;
+                sliderValueDisplay.textContent = `${currentTimeSec}s`; // Show current slider value in seconds
                 // Update the bar chart with the new value from WL1[index]
                 const safeIndex = Math.max(0, index - 1);
                 createBarChart(data, chartIndex, safeIndex, name);
@@ -916,10 +920,10 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 
-setupSliderButtons("time-slider-1", "slider-value-1");
-setupSliderButtons("time-slider-2", "slider-value-2");
-setupSliderButtons("time-slider-3", "slider-value-3");
-setupSliderButtons("time-slider-4", "slider-value-4");
+setupSliderButtons("time-slider-1", "slider-value-1", 0);
+setupSliderButtons("time-slider-2", "slider-value-2", 1);
+setupSliderButtons("time-slider-3", "slider-value-3", 2);
+setupSliderButtons("time-slider-4", "slider-value-4", 3);
 setupSliderButtons("time-slider-combined", "slider-value-combined");
 
 // ------------------------------------- Subject Selection -----------------------------------------
