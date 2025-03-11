@@ -1,5 +1,6 @@
 // ******************************************** Nagivation ****************************************************
 function moveToNextSlide() {
+    pauseCurrentSlideSliders();
     const slides = document.querySelectorAll('.slide');
     let currentSlide = Array.from(slides).findIndex(slide => slide.style.display !== 'none');
     slides[currentSlide].style.opacity = 0;
@@ -20,6 +21,7 @@ function moveToNextSlide() {
 }
 
 function moveToPreviousSlide() {
+    pauseCurrentSlideSliders();
     const slides = document.querySelectorAll('.slide');
     let currentSlide = Array.from(slides).findIndex(slide => slide.style.display !== 'none');
     if (currentSlide === 0){ return; }  // handle going from first slide to last slide
@@ -73,12 +75,12 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 
-// *********************************************Initialize Buttons*********************************************
-function setupSliderWithPlayPause(sliderId, sliderValueId) {
+// *********************************************Initialize Slider Buttons*********************************************
+function setupSliderButtons(sliderId, sliderValueId) {
     const slider = document.getElementById(sliderId);
     const sliderValueDisplay = document.getElementById(sliderValueId);
     const container = slider.parentNode;
-    console.log(container)
+    // console.log(container)
 
     // Create Play button
     const playBtn = document.createElement("button");
@@ -92,6 +94,12 @@ function setupSliderWithPlayPause(sliderId, sliderValueId) {
     pauseBtn.classList.add("play-pause-btn", "pause-button");
     container.appendChild(pauseBtn);
 
+    // Create Rewind button
+    const rewindBtn = document.createElement("button");
+    rewindBtn.textContent = "Rewind";
+    rewindBtn.classList.add("play-pause-btn", "rewind-button");
+    container.appendChild(rewindBtn);
+
     // Variables to manage the interval
     let intervalId = null;
     let isPlaying = false;
@@ -100,7 +108,6 @@ function setupSliderWithPlayPause(sliderId, sliderValueId) {
     playBtn.addEventListener("click", function() {
         if (isPlaying) return;  // Already playing
         isPlaying = true;
-
         // Start incrementing the slider at a fixed interval (e.g., every 100ms)
         intervalId = setInterval(() => {
             let currentValue = parseInt(slider.value);
@@ -126,6 +133,36 @@ function setupSliderWithPlayPause(sliderId, sliderValueId) {
         if (!isPlaying) return;
         clearInterval(intervalId);
         isPlaying = false;
+    });
+
+    // REWIND: Reset the slider back to the beginning
+    rewindBtn.addEventListener("click", function() {
+        // Stop the play interval if it's running
+        if (isPlaying) {
+            clearInterval(intervalId);
+            isPlaying = false;
+        }
+        // Reset slider value and display
+        // console.log(slider.min)
+        slider.value = slider.min;
+        sliderValueDisplay.textContent = "0s";
+        slider.dispatchEvent(new Event("input"));
+    });
+}
+
+function pauseCurrentSlideSliders() {
+    // Find the currently visible slide
+    const currentSlide = Array.from(document.querySelectorAll('.slide'))
+                              .find(slide => slide.style.display !== 'none');
+    if (!currentSlide) return;
+
+    // Find all slider elements in the current slide
+    const sliders = currentSlide.querySelectorAll('input[type="range"]');
+    sliders.forEach(slider => {
+        if (slider.isPlaying) {
+            clearInterval(slider.playIntervalId);
+            slider.isPlaying = false;
+        }
     });
 }
 
@@ -620,7 +657,8 @@ document.addEventListener("DOMContentLoaded", function () {
                 const index = parseInt(slider.value); // Get the current index from the slider
                 sliderValueDisplay.textContent = `${index/100}s`; // Show current slider value in seconds
                 // Update the bar chart with the new value from WL1[index]
-                createBarChart(data, chartIndex, index - 1, name);
+                const safeIndex = Math.max(0, index - 1);
+                createBarChart(data, chartIndex, safeIndex, name);
             });
         }
 
@@ -810,8 +848,8 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 
-setupSliderWithPlayPause("time-slider-1", "slider-value-1");
-setupSliderWithPlayPause("time-slider-2", "slider-value-2");
-setupSliderWithPlayPause("time-slider-3", "slider-value-3");
-setupSliderWithPlayPause("time-slider-4", "slider-value-4");
-setupSliderWithPlayPause("time-slider-combined", "slider-value-combined");
+setupSliderButtons("time-slider-1", "slider-value-1");
+setupSliderButtons("time-slider-2", "slider-value-2");
+setupSliderButtons("time-slider-3", "slider-value-3");
+setupSliderButtons("time-slider-4", "slider-value-4");
+setupSliderButtons("time-slider-combined", "slider-value-combined");
