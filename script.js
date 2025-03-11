@@ -512,14 +512,16 @@ document.addEventListener("DOMContentLoaded", function () {
         const WN_dis = extractSecondLast(WN);
         const WR_dis = extractSecondLast(WR);
 
-        const maxValue = Math.max(...WN_dis);
+        const maxValue = Math.max(...WN_dis); //measure the largest displacement value of four datasets
+        const maxForce = Math.max(...WN_work); //measuer the largest 
 
         //important numbers for setting up the bar graph
         //Let idx be a parameter for the function.
         //data.slice(0,idx), if idx is 3, it means we are plotting the
         //first three data. Using location[idx] for the x location of data from 
         //left to right. w[idx] tells us the width of each bar.
-        const data = [WL1_dis,WL2_dis,WN_dis,WR_dis];
+        const data1 = [WL1_dis,WL2_dis,WN_dis,WR_dis];
+        const data2 = [WL1_work, WL2_work, WN_work, WR_work];
         const location = [[170], [105, 275], [85, 200, 315], [73, 161, 249, 337]];
         const w = [100,60,40,30];
         let labels = ["WL1", "WL2", "WN", "WR"];
@@ -530,19 +532,30 @@ document.addEventListener("DOMContentLoaded", function () {
         const barMargin = { top: 20, right: 30, bottom: 40, left: 40 };
         const barWidth = 460 - barMargin.left - barMargin.right;
         const barHeight = 310 - barMargin.top - barMargin.bottom;
-        
-        createBarChart(1, 0);
-        createBarChart(2, 0);
-        createBarChart(3, 0);
-        createBarChart(4, 0);
+        //creating displacement graph
+        createBarChart(data1, 1, 0, 'bar');
+        createBarChart(data1, 2, 0, 'bar');
+        createBarChart(data1, 3, 0, 'bar');
+        createBarChart(data1, 4, 0, 'bar');
+        //create force graph
+        createBarChart(data2, 1, 0, 'forceBar');
+        createBarChart(data2, 2, 0, 'forceBar');
+        createBarChart(data2, 3, 0, 'forceBar');
+        createBarChart(data2, 4, 0, 'forceBar');
 
         // Initialize sliders
-        setupSlider('time-slider-1', 'slider-value-1', 1);
-        setupSlider('time-slider-2', 'slider-value-2', 2);
-        setupSlider('time-slider-3', 'slider-value-3', 3);
-        setupSlider('time-slider-4', 'slider-value-4', 4);
+        setupSlider(data1, 'time-slider-1', 'slider-value-1', 1, 'bar');
+        setupSlider(data1, 'time-slider-2', 'slider-value-2', 2, 'bar');
+        setupSlider(data1, 'time-slider-3', 'slider-value-3', 3, 'bar');
+        setupSlider(data1, 'time-slider-4', 'slider-value-4', 4, 'bar');
+
+        // Initialize sliders
+        setupSlider(data2, 'time-slider-1', 'slider-value-1', 1, 'forceBar');
+        setupSlider(data2, 'time-slider-2', 'slider-value-2', 2, 'forceBar');
+        setupSlider(data2, 'time-slider-3', 'slider-value-3', 3, 'forceBar');
+        setupSlider(data2, 'time-slider-4', 'slider-value-4', 4, 'forceBar');
   
-        function setupSlider(sliderId, sliderValueDisplayId, chartIndex) {
+        function setupSlider(data,sliderId, sliderValueDisplayId, chartIndex, name) {
             const slider = document.getElementById(sliderId);
             const sliderValueDisplay = document.getElementById(sliderValueDisplayId);
     
@@ -550,13 +563,15 @@ document.addEventListener("DOMContentLoaded", function () {
                 const index = parseInt(slider.value); // Get the current index from the slider
                 sliderValueDisplay.textContent = `${index/100}s`; // Show current slider value in seconds
                 // Update the bar chart with the new value from WL1[index]
-                createBarChart(chartIndex, index - 1);
+                createBarChart(data, chartIndex, index - 1, name);
             });
         }
 
         //choice means choosing slider, idx means one of the 6000 values.
-        function createBarChart(choice, idx){
-            const barChartContainer = d3.select(`#bar${choice}`);
+        function createBarChart(data, choice, idx, name){
+
+            // console.log(`${name + choice}`);
+            const barChartContainer = d3.select(`#${name+choice}`);
 
             //Remove any existing bars
             barChartContainer.selectAll('*').remove();
@@ -569,23 +584,41 @@ document.addEventListener("DOMContentLoaded", function () {
                 .attr("preserveAspectRatio", "xMidYMid meet")
 
             //slice the data based on idx to get the first 'choice' elements
+            //console.log(data);
             const selectedData = data.slice(0,choice);
             const selectedLocations = location[choice - 1];//get the locations of each bar
             const selectedWidths = w[choice - 1];//get the width of corresponding number of bars
+            if (name === 'bar'){
+                selectedData.forEach((dataSet, i) => {
+                    svg.append('rect')
+                        .attr('class', `bar-${i}`)
+                        .attr('x', selectedLocations[i]) //use corresponding location
+                        .attr('y',barHeight - scaleHeight(dataSet[idx],maxValue)-barMargin.bottom)// - bottom) //select y location
+                        .attr('width', selectedWidths)
+                        .attr('height', scaleHeight(dataSet[idx],maxValue))
+                        .attr('fill', getBarColor(i));
+                    //console.log(scaleHeight(dataSet[idx],maxValue));
+                    //console.log(selectedWidths[i]);
 
-            selectedData.forEach((dataSet, i) => {
-                svg.append('rect')
-                    .attr('class', `bar-${i}`)
-                    .attr('x', selectedLocations[i]) //use corresponding location
-                    .attr('y',barHeight - scaleHeight(dataSet[idx],maxValue)-barMargin.bottom)// - bottom) //select y location
-                    .attr('width', selectedWidths)
-                    .attr('height', scaleHeight(dataSet[idx],maxValue))
-                    .attr('fill', getBarColor(i));
-                //console.log(scaleHeight(dataSet[idx],maxValue));
-                //console.log(selectedWidths[i]);
+                });
+                createYAxisLabels(svg, maxValue, 'displacement'); //create unique y-label
+            }
+            else if (name === 'forceBar'){
+                selectedData.forEach((dataSet, i) => {
+                    svg.append('rect')
+                        .attr('class', `bar-${i}`)
+                        .attr('x', selectedLocations[i]) //use corresponding location
+                        .attr('y',barHeight - scaleHeight(dataSet[idx],maxForce)-barMargin.bottom)// - bottom) //select y location
+                        .attr('width', selectedWidths)
+                        .attr('height', scaleHeight(dataSet[idx],maxForce))
+                        .attr('fill', getBarColor(i));
+                    //console.log(scaleHeight(dataSet[idx],maxValue));
+                    //console.log(selectedWidths[i]);
 
-            });
-            createYAxisLabels(svg, maxValue);
+                });
+                createYAxisLabels(svg, maxForce, 'Work'); //create unique y-label                
+            }
+            //createYAxisLabels(svg, maxValue);
             // Create the X-axis
             createXAxisLabels(svg, choice); // Create X-axis without scaling, based on categories
         }
@@ -606,8 +639,8 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         //   // Function to create Y-axis labels
-        function createYAxisLabels(svg, maxValue) {
-            const yTicks = 10; // Number of ticks for the y-axis
+        function createYAxisLabels(svg, maxValue, yname) {
+            const yTicks = 8; // Number of ticks for the y-axis
 
             const yScale = d3.scaleLinear()
             .domain([0.0, maxValue])
@@ -630,7 +663,7 @@ document.addEventListener("DOMContentLoaded", function () {
             .attr("x", -barHeight / 2) // Adjust this to position the label along the Y-axis
             .style("text-anchor", "middle") // Center the label horizontally
             .style("font-size", "12px")
-            .text("Displacement");
+            .text(`${yname}`);
         }
 
         function createXAxisLabels(svg, idx){
