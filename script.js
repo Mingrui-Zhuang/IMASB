@@ -943,15 +943,6 @@ container.querySelectorAll('button').forEach(button => {
             selectedSubject = event.target.textContent.slice(-1);
             const linePlotDataFiles = [`data/1/${selectedSubject}WL1.csv`, `data/1/${selectedSubject}WL2.csv`, `data/1/${selectedSubject}WN.csv`, `data/1/${selectedSubject}WR.csv`];
             const dataPromises = linePlotDataFiles.map(file => d3.csv(file));
-            // const plots = ["plot1", "plot2", "plot3", "plot4"];
-            // const lineplots = ["plot-1", "plot-2", "plot-3", "plot-4"];
-            // const svgs = [];
-            // for (let plot of plots){
-            //     svgs.push(d3.select(`#${plot}`));
-            // }
-            // for (let plot of lineplots){
-            //     svgs.push(d3.select(`#${plot}`));
-            // }
             
             Promise.all(dataPromises).then(datasets => {
                 console.log("Datasets loaded:", datasets); // Check if datasets are loaded correctly
