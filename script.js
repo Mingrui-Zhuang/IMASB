@@ -110,22 +110,6 @@ function setupSliderButtons(sliderId, sliderValueId, audioIndex) {
     }
     slider.audio = audio;
 
-    // slider.addEventListener("input", function() {
-    //     const currentValue = +this.value;
-    //     sliderValueDisplay.textContent = (currentValue / 100) + "s";
-    // });
-    // slider.addEventListener("change", function () {
-    //     if (slider.audio) {
-    //         slider.audio.currentTime = this.value / 100;
-    //     }
-    // });
-    // if (slider.audio) {
-    //     slider.audio.addEventListener("timeupdate", function () {
-    //         slider.value = slider.audio.currentTime * 100;
-    //         sliderValueDisplay.textContent = (slider.audio.currentTime).toFixed(2) + "s";
-    //     });
-    // }
-
     slider.addEventListener("input", function () {
         sliderValueDisplay.textContent = (this.value / 100) + "s";
     });
@@ -154,6 +138,25 @@ function setupSliderButtons(sliderId, sliderValueId, audioIndex) {
         });
     }
 
+    // Speed
+    const speedSelect = document.createElement("select");
+    const speeds = [0.1, 0.5, 1, 1.5, 2, 5];
+    speeds.forEach(speed => {
+        const option = document.createElement("option");
+        option.value = speed;
+        option.textContent = speed + "x";
+        if (speed === 1) {
+            option.selected = true; // Default speed is 1x
+        }
+        speedSelect.appendChild(option);
+    });
+    container.appendChild(speedSelect);
+    speedSelect.addEventListener("change", function() {
+        if (slider.audio) {
+            slider.audio.playbackRate = parseFloat(this.value) || 1;
+        }
+    });
+
     // Create Play button
     const playBtn = document.createElement("button");
     playBtn.textContent = "▶️";
@@ -176,18 +179,17 @@ function setupSliderButtons(sliderId, sliderValueId, audioIndex) {
     playBtn.addEventListener("click", function() {
         if (slider.isPlaying) return;  // Already playing
         slider.isPlaying = true;
+        const step = 10;
         slider.playIntervalId = setInterval(() => {
-            let currentValue = parseInt(slider.value);
-            // Increase the slider value by e.g. 10 each step
+            let currentValue = parseInt(slider.value, 10);
+            // const playbackRate = slider.audio ? slider.audio.playbackRate : 1;
+            const playbackRate = slider.audio ? slider.audio.playbackRate : (parseFloat(speedSelect.value) || 1);
             if (currentValue < slider.max) {
-                currentValue += 10;
+                currentValue += step * playbackRate;
                 slider.value = currentValue;
-                // Update the displayed time
                 sliderValueDisplay.textContent = (currentValue / 100) + "s";
-                // Trigger the slider's input event to update your plots
                 slider.dispatchEvent(new Event("input"));
             } else {
-                // If we reached the end, stop
                 clearInterval(slider.playIntervalId);
                 slider.isPlaying = false;
             }
@@ -195,7 +197,7 @@ function setupSliderButtons(sliderId, sliderValueId, audioIndex) {
         if (slider.audio) {
             // Sync the audio's currentTime to the slider value
             slider.audio.currentTime = slider.value / 100;
-            slider.audio.playbackRate = 1;
+            slider.audio.playbackRate = parseFloat(speedSelect.value) || 1;
             slider.audio.play();
         }
     });
@@ -974,7 +976,7 @@ setupSliderButtons("time-slider-1", "slider-value-1", 0);
 setupSliderButtons("time-slider-2", "slider-value-2", 1);
 setupSliderButtons("time-slider-3", "slider-value-3", 2);
 setupSliderButtons("time-slider-4", "slider-value-4", 3);
-setupSliderButtons("time-slider-combined", "slider-value-combined");
+setupSliderButtons("time-slider-combined", "slider-value-combined", 1);
 
 // ------------------------------------- Subject Selection -----------------------------------------
 const container = document.getElementById('main-content');
