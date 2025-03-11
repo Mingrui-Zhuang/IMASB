@@ -101,6 +101,7 @@ function setupSliderButtons(sliderId, sliderValueId, audioIndex) {
     // Initialize custom properties
     slider.playIntervalId = null;
     slider.isPlaying = false;
+    slider.isDragging = false;
 
     // Create an Audio object
     let audio = null;
@@ -109,13 +110,49 @@ function setupSliderButtons(sliderId, sliderValueId, audioIndex) {
     }
     slider.audio = audio;
 
-    slider.addEventListener("input", function() {
-        const currentValue = +this.value;
-        sliderValueDisplay.textContent = (currentValue / 100) + "s";
-        if (slider.isPlaying && slider.audio) {
-            slider.audio.currentTime = currentValue / 100;
+    // slider.addEventListener("input", function() {
+    //     const currentValue = +this.value;
+    //     sliderValueDisplay.textContent = (currentValue / 100) + "s";
+    // });
+    // slider.addEventListener("change", function () {
+    //     if (slider.audio) {
+    //         slider.audio.currentTime = this.value / 100;
+    //     }
+    // });
+    // if (slider.audio) {
+    //     slider.audio.addEventListener("timeupdate", function () {
+    //         slider.value = slider.audio.currentTime * 100;
+    //         sliderValueDisplay.textContent = (slider.audio.currentTime).toFixed(2) + "s";
+    //     });
+    // }
+
+    slider.addEventListener("input", function () {
+        sliderValueDisplay.textContent = (this.value / 100) + "s";
+    });
+    // Mark the start of a drag
+    slider.addEventListener("mousedown", function () {
+        slider.isDragging = true;
+    });
+    // On mouse release, update the audio's currentTime
+    slider.addEventListener("mouseup", function () {
+        slider.isDragging = false;
+        if (slider.audio) {
+            slider.audio.currentTime = this.value / 100;
+            // Resume playing if needed:
+            if (!slider.audio.paused) {
+                slider.audio.play();
+            }
         }
     });
+    // Update the slider based on audio playback when not dragging
+    if (slider.audio) {
+        slider.audio.addEventListener("timeupdate", function () {
+            if (!slider.isDragging) {
+                slider.value = slider.audio.currentTime * 100;
+                sliderValueDisplay.textContent = slider.audio.currentTime.toFixed(2) + "s";
+            }
+        });
+    }
 
     // Create Play button
     const playBtn = document.createElement("button");
