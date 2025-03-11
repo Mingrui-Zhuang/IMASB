@@ -101,6 +101,7 @@ function setupSliderButtons(sliderId, sliderValueId, audioIndex) {
     // Initialize custom properties
     slider.playIntervalId = null;
     slider.isPlaying = false;
+    slider.isDragging = false;
 
     // Create an Audio object
     let audio = null;
@@ -109,13 +110,49 @@ function setupSliderButtons(sliderId, sliderValueId, audioIndex) {
     }
     slider.audio = audio;
 
-    slider.addEventListener("input", function() {
-        const currentValue = +this.value;
-        sliderValueDisplay.textContent = (currentValue / 100) + "s";
-        if (slider.isPlaying && slider.audio) {
-            slider.audio.currentTime = currentValue / 100;
+    // slider.addEventListener("input", function() {
+    //     const currentValue = +this.value;
+    //     sliderValueDisplay.textContent = (currentValue / 100) + "s";
+    // });
+    // slider.addEventListener("change", function () {
+    //     if (slider.audio) {
+    //         slider.audio.currentTime = this.value / 100;
+    //     }
+    // });
+    // if (slider.audio) {
+    //     slider.audio.addEventListener("timeupdate", function () {
+    //         slider.value = slider.audio.currentTime * 100;
+    //         sliderValueDisplay.textContent = (slider.audio.currentTime).toFixed(2) + "s";
+    //     });
+    // }
+
+    slider.addEventListener("input", function () {
+        sliderValueDisplay.textContent = (this.value / 100) + "s";
+    });
+    // Mark the start of a drag
+    slider.addEventListener("mousedown", function () {
+        slider.isDragging = true;
+    });
+    // On mouse release, update the audio's currentTime
+    slider.addEventListener("mouseup", function () {
+        slider.isDragging = false;
+        if (slider.audio) {
+            slider.audio.currentTime = this.value / 100;
+            // Resume playing if needed:
+            if (!slider.audio.paused) {
+                slider.audio.play();
+            }
         }
     });
+    // Update the slider based on audio playback when not dragging
+    if (slider.audio) {
+        slider.audio.addEventListener("timeupdate", function () {
+            if (!slider.isDragging) {
+                slider.value = slider.audio.currentTime * 100;
+                sliderValueDisplay.textContent = slider.audio.currentTime.toFixed(2) + "s";
+            }
+        });
+    }
 
     // Create Play button
     const playBtn = document.createElement("button");
@@ -702,23 +739,31 @@ document.addEventListener("DOMContentLoaded", function () {
         createBarChart(data1, 2, 0, 'bar');
         createBarChart(data1, 3, 0, 'bar');
         createBarChart(data1, 4, 0, 'bar');
+        //create final bar chart
+        createBarChart(data1, 5, 0, 'bar');
         //create force graph
         createBarChart(data2, 1, 0, 'forceBar');
         createBarChart(data2, 2, 0, 'forceBar');
         createBarChart(data2, 3, 0, 'forceBar');
         createBarChart(data2, 4, 0, 'forceBar');
+        //create final bar chart
+        createBarChart(data2, 5, 0, 'forceBar');
 
         // Initialize sliders
         setupSlider(data1, 'time-slider-1', 'slider-value-1', 1, 'bar');
         setupSlider(data1, 'time-slider-2', 'slider-value-2', 2, 'bar');
         setupSlider(data1, 'time-slider-3', 'slider-value-3', 3, 'bar');
         setupSlider(data1, 'time-slider-4', 'slider-value-4', 4, 'bar');
+        //Final slider
+        setupSlider(data1, 'time-slider-combined', 'slider-value-combined', 5, 'bar');
 
         // Initialize sliders
         setupSlider(data2, 'time-slider-1', 'slider-value-1', 1, 'forceBar');
         setupSlider(data2, 'time-slider-2', 'slider-value-2', 2, 'forceBar');
         setupSlider(data2, 'time-slider-3', 'slider-value-3', 3, 'forceBar');
         setupSlider(data2, 'time-slider-4', 'slider-value-4', 4, 'forceBar');
+        //Final slider
+        setupSlider(data2, 'time-slider-combined', 'slider-value-combined', 5, 'forceBar');
   
         function setupSlider(data,sliderId, sliderValueDisplayId, chartIndex, name) {
             const slider = document.getElementById(sliderId);
@@ -739,6 +784,10 @@ document.addEventListener("DOMContentLoaded", function () {
 
             // console.log(`${name + choice}`);
             const barChartContainer = d3.select(`#${name+choice}`);
+            //for final slider
+            if (choice === 5){
+                choice = 4;
+            }
 
             //Remove any existing bars
             barChartContainer.selectAll('*').remove();
