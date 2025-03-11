@@ -1,3 +1,23 @@
+// ******************************************** Global Variable ****************************************************
+let selectedSubject = '1';
+
+const dataFiles = ["data/1/WL1_clean.csv", "data/1/WL2_clean.csv", "data/1/WN_clean.csv", "data/1/WR_clean.csv"];
+const plots = ["plot1", "plot2", "plot3", "plot4"];
+const lineplots = ["plot-1", "plot-2", "plot-3", "plot-4"];
+
+const titles = ["WL1", "WL2", "WN", "WR"];
+const margin = { top: 20, right: 30, bottom: 30, left: 60 };
+const width = 500 - margin.left - margin.right;
+const height = 300 - margin.top - margin.bottom;
+
+const svgs = [];
+const xScales = [];
+const yScales = [];
+const lines = [];
+const paths = [];
+const dots = [];
+const tooltips = [];
+const hoverAreas = [];
 // ******************************************** Nagivation ****************************************************
 function moveToNextSlide() {
     pauseCurrentSlideSliders();
@@ -172,23 +192,24 @@ function pauseCurrentSlideSliders() {
 
 // ******************************************** Plots ****************************************************
 document.addEventListener("DOMContentLoaded", function () {
-    const dataFiles = ["data/1/WN_clean.csv", "data/1/WR_clean.csv", "data/1/WL1_clean.csv", "data/1/WL2_clean.csv"];
-    const plots = ["plot1", "plot2", "plot3", "plot4"];
-    const lineplots = ["plot-1", "plot-2", "plot-3", "plot-4"];
+    // const dataFiles = ["data/1/WL1_clean.csv", "data/1/WL2_clean.csv", "data/1/WN_clean.csv", "data/1/WR_clean.csv"];
+    // const plots = ["plot1", "plot2", "plot3", "plot4"];
+    // const lineplots = ["plot-1", "plot-2", "plot-3", "plot-4"];
 
-    const titles = ["WN", "WR", "WL1", "WL2"];
-    const margin = { top: 20, right: 30, bottom: 30, left: 60 };
-    const width = 500 - margin.left - margin.right;
-    const height = 300 - margin.top - margin.bottom;
+    // const titles = ["WL1", "WL2", "WN", "WR"];
+    // const margin = { top: 20, right: 30, bottom: 30, left: 60 };
+    // const width = 500 - margin.left - margin.right;
+    // const height = 300 - margin.top - margin.bottom;
 
-    const svgs = [];
-    const xScales = [];
-    const yScales = [];
-    const lines = [];
-    const paths = [];
-    const dots = [];
-    const tooltips = [];
-    const hoverAreas = [];
+    // const svgs = [];
+    // const xScales = [];
+    // const yScales = [];
+    // const lines = [];
+    // const paths = [];
+    // const dots = [];
+    // const tooltips = [];
+    // const hoverAreas = [];
+
 
 // *********************************************Initialize Single Line Plots*********************************************
 
@@ -389,8 +410,8 @@ document.addEventListener("DOMContentLoaded", function () {
                 }
 
                 // Update the line path
-                paths[index].datum(filteredData)
-                    .attr("d", lines[index]);
+                // paths[index].datum(filteredData)
+                //     .attr("d", lines[index]);
 
                 // Calculate the max time for normalization
                 const maxTime = d3.max(filteredData, d => +d.time);
@@ -402,7 +423,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 }));
 
                 // Apply gradient effect based on time
-                paths[index].attr("stroke", "none"); // Reset stroke
+                // paths[index].attr("stroke", "none"); // Reset stroke
                 svgs[index].selectAll(".line-segment").remove(); // Remove old segments
 
                 // Draw line segments with color based on time
@@ -503,7 +524,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 // Early exit if no data or time=0
                 if (filteredData.length === 0 || currentTime === 0) {
                     // Clear the main path
-                    paths[offsetIndex].datum([]).attr("d", null);
+                    // paths[offsetIndex].datum([]).attr("d", null);
 
                     // Remove any leftover line segments
                     svgs[offsetIndex].selectAll(".line-segment").remove();
@@ -520,8 +541,8 @@ document.addEventListener("DOMContentLoaded", function () {
                 }
         
                 // Update the line path
-                paths[offsetIndex].datum(filteredData)
-                    .attr("d", lines[offsetIndex]);
+                // paths[offsetIndex].datum(filteredData)
+                //     .attr("d", lines[offsetIndex]);
         
                 // Calculate the max time for normalization
                 const maxTime = d3.max(filteredData, d => +d.time);
@@ -533,7 +554,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 }));
         
                 // Apply gradient effect based on time
-                paths[offsetIndex].attr("stroke", "none"); // Reset stroke
+                // paths[offsetIndex].attr("stroke", "none"); // Reset stroke
                 svgs[offsetIndex].selectAll(".line-segment").remove(); // Remove old segments
         
                 // Draw line segments with color based on time
@@ -882,3 +903,162 @@ setupSliderButtons("time-slider-2", "slider-value-2");
 setupSliderButtons("time-slider-3", "slider-value-3");
 setupSliderButtons("time-slider-4", "slider-value-4");
 setupSliderButtons("time-slider-combined", "slider-value-combined");
+
+// ------------------------------------- Subject Selection -----------------------------------------
+const container = document.getElementById('plots-container-combined');
+
+container.querySelectorAll('button').forEach(button => {
+    button.addEventListener('click',(event)=>{
+        if (event.target.attr === 'selectedSubject'){ return;}
+        else{
+            const container = document.getElementById('plots-container-combined');
+            container.querySelectorAll('button').forEach(button => {
+                button.setAttribute('class', 'choiceBtn');
+            });
+
+            event.target.setAttribute('class','selectedSubject');
+
+            selectedSubject = event.target.textContent.slice(-1);
+            const linePlotDataFiles = [`data/1/${selectedSubject}WL1.csv`, `data/1/${selectedSubject}WL2.csv`, `data/1/${selectedSubject}WN.csv`, `data/1/${selectedSubject}WR.csv`];
+            const dataPromises = linePlotDataFiles.map(file => d3.csv(file));
+            // const plots = ["plot1", "plot2", "plot3", "plot4"];
+            // const lineplots = ["plot-1", "plot-2", "plot-3", "plot-4"];
+            // const svgs = [];
+            // for (let plot of plots){
+            //     svgs.push(d3.select(`#${plot}`));
+            // }
+            // for (let plot of lineplots){
+            //     svgs.push(d3.select(`#${plot}`));
+            // }
+            
+            Promise.all(dataPromises).then(datasets => {
+                console.log("Datasets loaded:", datasets); // Check if datasets are loaded correctly
+
+                // *********************************************COMBINED Line Plot*********************************************
+                // Create a combined slider for the final slide
+                const combinedSlider = d3.select("#time-slider-combined");
+                const combinedSliderValue = d3.select("#slider-value-combined");
+
+                combinedSlider.on("input", function () {
+                    const currentTime = +this.value;
+                    combinedSliderValue.text(`${currentTime / 100}s`);
+                
+                    lineplots.forEach((plotId, index) => {
+                        const offsetIndex = index + plots.length;
+                        const data = datasets[index];
+                
+                        const filteredData = data.filter(d => d.time <= currentTime);
+                        // console.log(`Filtered data for plot ${plotId}:`, filteredData); // Check the filtered data
+                
+                        // Early exit if no data or time=0
+                        if (filteredData.length === 0 || currentTime === 0) {
+                            // Remove any leftover line segments
+                            svgs[offsetIndex].selectAll(".line-segment").remove();
+
+                            // Hide the dot & hover area
+                            dots[offsetIndex].style("opacity", 0);
+                            hoverAreas[offsetIndex].style("opacity", 0);
+
+                            // Remove old hover lines
+                            svgs[offsetIndex].selectAll(".hover-line").remove();
+
+                            // Skip the rest of the logic for this plot
+                            return;
+                        }
+                
+                        // Calculate the max time for normalization
+                        const maxTime = d3.max(filteredData, d => +d.time);
+                
+                        // Normalize time values to [0, 1]
+                        const normalizedData = filteredData.map(d => ({
+                            ...d,
+                            normalizedTime: +d.time / maxTime
+                        }));
+                
+                        // Apply gradient effect based on time
+                        svgs[offsetIndex].selectAll(".line-segment").remove(); // Remove old segments
+                
+                        // Draw line segments with color based on time
+                        for (let i = 1; i < normalizedData.length; i++) {
+                            const segmentData = [normalizedData[i - 1], normalizedData[i]];
+                            const segmentTime = (normalizedData[i].normalizedTime + normalizedData[i - 1].normalizedTime) / 2;
+                
+                            // Interpolate color based on normalized time
+                            const color = d3.interpolateRgb("lightblue", "darkblue")(segmentTime);
+                
+                            svgs[offsetIndex].append("path")
+                                .datum(segmentData)
+                                .attr("class", "line-segment")
+                                .attr("d", lines[offsetIndex])
+                                .attr("stroke", color)
+                                .attr("stroke-width", 2)
+                                .attr("fill", "none");
+                        }
+                
+                        // Update the dot position
+                        const lastDataPoint = filteredData[filteredData.length - 1];
+                        const cx = xScales[offsetIndex](lastDataPoint.CoPx);
+                        const cy = yScales[offsetIndex](lastDataPoint.CoPy);
+            
+                        if (cx >= 0 && cx <= width && cy >= 0 && cy <= height) {
+                            dots[offsetIndex].datum(lastDataPoint)
+                                .attr("cx", cx)
+                                .attr("cy", cy)
+                                .style("opacity", 1)
+                                .raise();
+            
+                            // Update the hover area position
+                            hoverAreas[offsetIndex].datum(lastDataPoint)
+                                .attr("cx", cx)
+                                .attr("cy", cy)
+                                .raise();
+            
+                        } else {
+                            dots[offsetIndex].style("opacity", 0);
+                            hoverAreas[offsetIndex].style("opacity", 0);
+                        }
+                
+                        // Remove old hover lines
+                        svgs[offsetIndex].selectAll(".hover-line").remove();
+                
+                        // Add tooltips to the dots
+                        hoverAreas[offsetIndex]
+                            .on("mouseover", function (event, d) {
+                                const CoPx = parseFloat(d.CoPx).toFixed(5);
+                                const CoPy = parseFloat(d.CoPy).toFixed(5);
+                                const displacement = parseFloat(d.displacement).toFixed(5);
+                
+                                // Show the tooltip
+                                tooltips[offsetIndex].style("opacity", 1)
+                                    .html(`CoPx: ${CoPx}<br>CoPy: ${CoPy}<br>Displacement: ${displacement}`)
+                                    .style("left", `${event.pageX + 5}px`)
+                                    .style("top", `${event.pageY + 5}px`);
+                
+                                // Add hover lines
+                                svgs[offsetIndex].append("line")
+                                    .attr("class", "hover-line")
+                                    .attr("x1", xScales[offsetIndex](d.CoPx))
+                                    .attr("y1", yScales[offsetIndex](d.CoPy))
+                                    .attr("x2", xScales[offsetIndex](d.CoPx))
+                                    .attr("y2", height)
+                                    .attr("stroke", "#000");
+                
+                                svgs[offsetIndex].append("line")
+                                    .attr("class", "hover-line")
+                                    .attr("x1", xScales[offsetIndex](d.CoPx))
+                                    .attr("y1", yScales[offsetIndex](d.CoPy))
+                                    .attr("x2", 0)
+                                    .attr("y2", yScales[offsetIndex](d.CoPy))
+                                    .attr("stroke", "#000");
+                            })
+                            .on("mouseout", function () {
+                                tooltips[offsetIndex].style("opacity", 0);
+                                svgs[offsetIndex].selectAll(".hover-line").remove();
+                            });
+                    });
+                });
+            });
+        }
+    });
+});
+
