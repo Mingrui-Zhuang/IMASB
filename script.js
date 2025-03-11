@@ -82,6 +82,10 @@ function setupSliderButtons(sliderId, sliderValueId) {
     const container = slider.parentNode;
     // console.log(container)
 
+    // Initialize custom properties
+    slider.playIntervalId = null;
+    slider.isPlaying = false;
+
     // Create Play button
     const playBtn = document.createElement("button");
     playBtn.textContent = "Play";
@@ -100,16 +104,16 @@ function setupSliderButtons(sliderId, sliderValueId) {
     rewindBtn.classList.add("play-pause-btn", "rewind-button");
     container.appendChild(rewindBtn);
 
-    // Variables to manage the interval
-    let intervalId = null;
-    let isPlaying = false;
+    // // Variables to manage the interval
+    // let intervalId = null;
+    // let isPlaying = false;
 
     // PLAY
     playBtn.addEventListener("click", function() {
-        if (isPlaying) return;  // Already playing
-        isPlaying = true;
+        if (slider.isPlaying) return;  // Already playing
+        slider.isPlaying = true;
         // Start incrementing the slider at a fixed interval (e.g., every 100ms)
-        intervalId = setInterval(() => {
+        slider.playIntervalId = setInterval(() => {
             let currentValue = parseInt(slider.value);
             // Increase the slider value by e.g. 50 each step
             // so it takes (6000 / 50) * 100ms = 12s to go full range
@@ -122,25 +126,25 @@ function setupSliderButtons(sliderId, sliderValueId) {
                 slider.dispatchEvent(new Event("input"));
             } else {
                 // If we reached the end, stop
-                clearInterval(intervalId);
-                isPlaying = false;
+                clearInterval(slider.playIntervalId);
+                slider.isPlaying = false;
             }
         }, 100);
     });
 
     // PAUSE
     pauseBtn.addEventListener("click", function() {
-        if (!isPlaying) return;
-        clearInterval(intervalId);
-        isPlaying = false;
+        if (!slider.isPlaying) return;
+        clearInterval(slider.playIntervalId);
+        slider.isPlaying = false;
     });
 
     // REWIND: Reset the slider back to the beginning
     rewindBtn.addEventListener("click", function() {
         // Stop the play interval if it's running
-        if (isPlaying) {
-            clearInterval(intervalId);
-            isPlaying = false;
+        if (slider.isPlaying) {
+            clearInterval(slider.playIntervalId);
+            slider.isPlaying = false;
         }
         // Reset slider value and display
         // console.log(slider.min)
