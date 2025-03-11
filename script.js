@@ -416,7 +416,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const dataPromises = dataFiles.map(file => d3.csv(file));
 
     Promise.all(dataPromises).then(datasets => {
-        console.log("Datasets loaded:", datasets); // Check if datasets are loaded correctly
+        // console.log("Datasets loaded:", datasets); // Check if datasets are loaded correctly
 
         // *********************************************Single Line Plot*********************************************
         plots.forEach((plotId, index) => {
@@ -781,12 +781,13 @@ document.addEventListener("DOMContentLoaded", function () {
 
         //choice means choosing slider, idx means one of the 6000 values.
         function createBarChart(data, choice, idx, name){
-
+            let slide5 = false;
             // console.log(`${name + choice}`);
             const barChartContainer = d3.select(`#${name+choice}`);
             //for final slider
             if (choice === 5){
                 choice = 4;
+                slide5 = true;
             }
 
             //Remove any existing bars
@@ -824,7 +825,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         .attr('font-size', '13px') // Set the font size to 5px
                         .attr('font-weight', 'bold') // Make the text bold
                         .attr('font-family', 'Arial, Helvetica, sans-serif')  // List of fallback fonts
-                        .text(`Current: ${Math.round(dataSet[idx]*10000)/10000}`); // Display the value
+                        .text(slide5? `${Math.round(dataSet[idx]*10000)/10000}`:`Current: ${Math.round(dataSet[idx]*10000)/10000}`); // Display the value
                     }
                     else{
                         svg.append('text')
@@ -859,7 +860,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         .attr('font-size', '13px') // Set the font size to 5px
                         .attr('font-weight', 'bold') // Make the text bold
                         .attr('font-family', 'Arial, Helvetica, sans-serif')  // List of fallback fonts
-                        .text(`Current: ${Math.round(dataSet[idx]*100)/100}`); // Display the value
+                        .text(slide5? `${Math.round(dataSet[idx]*100)/100}`:`Current: ${Math.round(dataSet[idx]*100)/100}`); // Display the value
                     }
                     else{
                         svg.append('text')
@@ -992,18 +993,9 @@ container.querySelectorAll('button').forEach(button => {
             selectedSubject = event.target.textContent.slice(-1);
             const linePlotDataFiles = [`data/1/${selectedSubject}WL1.csv`, `data/1/${selectedSubject}WL2.csv`, `data/1/${selectedSubject}WN.csv`, `data/1/${selectedSubject}WR.csv`];
             const dataPromises = linePlotDataFiles.map(file => d3.csv(file));
-            // const plots = ["plot1", "plot2", "plot3", "plot4"];
-            // const lineplots = ["plot-1", "plot-2", "plot-3", "plot-4"];
-            // const svgs = [];
-            // for (let plot of plots){
-            //     svgs.push(d3.select(`#${plot}`));
-            // }
-            // for (let plot of lineplots){
-            //     svgs.push(d3.select(`#${plot}`));
-            // }
             
             Promise.all(dataPromises).then(datasets => {
-                console.log("Datasets loaded:", datasets); // Check if datasets are loaded correctly
+                // console.log("Datasets loaded:", datasets); // Check if datasets are loaded correctly
 
                 // *********************************************COMBINED Line Plot*********************************************
                 // Create a combined slider for the final slide
