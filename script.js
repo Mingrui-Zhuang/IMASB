@@ -1,11 +1,11 @@
 // ******************************************** Global Variable ****************************************************
 let selectedSubject = '1';
 
-const dataFiles = ["data/1/WL1_clean.csv", "data/1/WL2_clean.csv", "data/1/WN_clean.csv", "data/1/WR_clean.csv"];
+const dataFiles = ["data/1/WN_clean.csv", "data/1/WR_clean.csv", "data/1/WL1_clean.csv", "data/1/WL2_clean.csv"];
 const plots = ["plot1", "plot2", "plot3", "plot4"];
 const lineplots = ["plot-1", "plot-2", "plot-3", "plot-4"];
 
-const titles = ["WL1", "WL2", "WN", "WR"];
+const titles = ["WN", "WR", "WL1", "WL2"];
 const margin = { top: 20, right: 30, bottom: 30, left: 60 };
 const width = 500 - margin.left - margin.right;
 const height = 300 - margin.top - margin.bottom;
@@ -403,7 +403,10 @@ document.addEventListener("DOMContentLoaded", function () {
                     svgs[index].selectAll(".line-segment").remove();
                     // Hide dot & hover area
                     dots[index].style("opacity", 0);
-                    hoverAreas[index].style("opacity", 0);
+                    hoverAreas[index]
+                    .style("opacity", 0)
+                    .attr("r", 0)
+                    .style("pointer-events", "none");
                     // Remove old hover lines
                     svgs[index].selectAll(".hover-line").remove();
                     return; // Skip the rest of the logic
@@ -459,11 +462,17 @@ document.addEventListener("DOMContentLoaded", function () {
                     hoverAreas[index].datum(lastDataPoint)
                         .attr("cx", cx)
                         .attr("cy", cy)
+                        .attr("r", 30)
+                        .style("pointer-events", "all")
+                        .style("opacity", 0)
                         .raise();
 
                 } else {
                     dots[index].style("opacity", 0);
-                    hoverAreas[index].style("opacity", 0);
+                    hoverAreas[index]
+                    .style("opacity", 0)
+                    .attr("r", 0)
+                    .style("pointer-events", "none");
                 }
 
                 // Remove old hover lines
@@ -531,7 +540,10 @@ document.addEventListener("DOMContentLoaded", function () {
 
                     // Hide the dot & hover area
                     dots[offsetIndex].style("opacity", 0);
-                    hoverAreas[offsetIndex].style("opacity", 0);
+                    hoverAreas[offsetIndex]
+                    .style("opacity", 0)
+                    .attr("r", 0)
+                    .style("pointer-events", "none");
 
                     // Remove old hover lines
                     svgs[offsetIndex].selectAll(".hover-line").remove();
@@ -590,11 +602,17 @@ document.addEventListener("DOMContentLoaded", function () {
                     hoverAreas[offsetIndex].datum(lastDataPoint)
                         .attr("cx", cx)
                         .attr("cy", cy)
+                        .attr("r", 30)
+                        .style("pointer-events", "all")
+                        .style("opacity", 0)
                         .raise();
     
                 } else {
                     dots[offsetIndex].style("opacity", 0);
-                    hoverAreas[offsetIndex].style("opacity", 0);
+                    hoverAreas[offsetIndex]
+                    .style("opacity", 0)
+                    .attr("r", 0)
+                    .style("pointer-events", "none");
                 }
         
                 // Remove old hover lines
@@ -957,7 +975,10 @@ container.querySelectorAll('button').forEach(button => {
 
                             // Hide the dot & hover area
                             dots[offsetIndex].style("opacity", 0);
-                            hoverAreas[offsetIndex].style("opacity", 0);
+                            hoverAreas[offsetIndex]
+                            .style("opacity", 0)
+                            .attr("r", 0)
+                            .style("pointer-events", "none");
 
                             // Remove old hover lines
                             svgs[offsetIndex].selectAll(".hover-line").remove();
@@ -1011,11 +1032,17 @@ container.querySelectorAll('button').forEach(button => {
                             hoverAreas[offsetIndex].datum(lastDataPoint)
                                 .attr("cx", cx)
                                 .attr("cy", cy)
+                                .attr("r", 30)
+                                .style("opacity", 0)
+                                .style("pointer-events", "all")
                                 .raise();
             
                         } else {
                             dots[offsetIndex].style("opacity", 0);
-                            hoverAreas[offsetIndex].style("opacity", 0);
+                            hoverAreas[offsetIndex]
+                            .style("opacity", 0)
+                            .attr("r", 0)
+                            .style("pointer-events", "none");
                         }
                 
                         // Remove old hover lines
