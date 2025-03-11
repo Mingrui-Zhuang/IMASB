@@ -512,8 +512,8 @@ document.addEventListener("DOMContentLoaded", function () {
         const WN_dis = extractSecondLast(WN);
         const WR_dis = extractSecondLast(WR);
 
-        const maxValue = Math.max(...WN_dis); //measure the largest displacement value of four datasets
-        const maxForce = Math.max(...WN_work); //measuer the largest 
+        const maxValue = Math.max(...WL1_dis); //measure the largest displacement value of four datasets
+        const maxForce = Math.max(...WL1_work); //measuer the largest 
 
         //important numbers for setting up the bar graph
         //Let idx be a parameter for the function.
