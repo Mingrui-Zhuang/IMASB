@@ -72,6 +72,63 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
+
+// *********************************************Initialize Buttons*********************************************
+function setupSliderWithPlayPause(sliderId, sliderValueId) {
+    const slider = document.getElementById(sliderId);
+    const sliderValueDisplay = document.getElementById(sliderValueId);
+    const container = slider.parentNode;
+    console.log(container)
+
+    // Create Play button
+    const playBtn = document.createElement("button");
+    playBtn.textContent = "Play";
+    playBtn.classList.add("play-pause-btn", "play-button");
+    container.appendChild(playBtn);
+
+    // Create Pause button
+    const pauseBtn = document.createElement("button");
+    pauseBtn.textContent = "Pause";
+    pauseBtn.classList.add("play-pause-btn", "pause-button");
+    container.appendChild(pauseBtn);
+
+    // Variables to manage the interval
+    let intervalId = null;
+    let isPlaying = false;
+
+    // PLAY
+    playBtn.addEventListener("click", function() {
+        if (isPlaying) return;  // Already playing
+        isPlaying = true;
+
+        // Start incrementing the slider at a fixed interval (e.g., every 100ms)
+        intervalId = setInterval(() => {
+            let currentValue = parseInt(slider.value);
+            // Increase the slider value by e.g. 50 each step
+            // so it takes (6000 / 50) * 100ms = 12s to go full range
+            if (currentValue < slider.max) {
+                currentValue += 50;
+                slider.value = currentValue;
+                // Update the displayed time
+                sliderValueDisplay.textContent = (currentValue / 100) + "s";
+                // Trigger the slider's input event to update your plots
+                slider.dispatchEvent(new Event("input"));
+            } else {
+                // If we reached the end, stop
+                clearInterval(intervalId);
+                isPlaying = false;
+            }
+        }, 100);
+    });
+
+    // PAUSE
+    pauseBtn.addEventListener("click", function() {
+        if (!isPlaying) return;
+        clearInterval(intervalId);
+        isPlaying = false;
+    });
+}
+
 // ******************************************** Plots ****************************************************
 document.addEventListener("DOMContentLoaded", function () {
     const dataFiles = ["data/1/WL1_clean.csv", "data/1/WL2_clean.csv", "data/1/WN_clean.csv", "data/1/WR_clean.csv"];
@@ -751,3 +808,10 @@ document.addEventListener("DOMContentLoaded", function () {
         })
     }
 });
+
+
+setupSliderWithPlayPause("time-slider-1", "slider-value-1");
+setupSliderWithPlayPause("time-slider-2", "slider-value-2");
+setupSliderWithPlayPause("time-slider-3", "slider-value-3");
+setupSliderWithPlayPause("time-slider-4", "slider-value-4");
+setupSliderWithPlayPause("time-slider-combined", "slider-value-combined");
