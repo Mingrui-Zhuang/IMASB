@@ -1,3 +1,5 @@
+// ******************************************** Global Variable ****************************************************
+let selectedSubject = '1';
 // ******************************************** Nagivation ****************************************************
 function moveToNextSlide() {
     const slides = document.querySelectorAll('.slide');
@@ -75,6 +77,7 @@ document.addEventListener('DOMContentLoaded', function() {
 // ******************************************** Plots ****************************************************
 document.addEventListener("DOMContentLoaded", function () {
     const dataFiles = ["data/1/WL1_clean.csv", "data/1/WL2_clean.csv", "data/1/WN_clean.csv", "data/1/WR_clean.csv"];
+    // const MovementDataFiles = [`data/1/${selectedSubject}WL1.csv`, `data/1/${selectedSubject}WL2.csv`, `data/1/${selectedSubject}WN.csv`, `data/1/${selectedSubject}WR.csv`];
     const plots = ["plot1", "plot2", "plot3", "plot4"];
     const lineplots = ["plot-1", "plot-2", "plot-3", "plot-4"];
 
@@ -277,8 +280,8 @@ document.addEventListener("DOMContentLoaded", function () {
                 // console.log(`Filtered data for plot ${plotId}:`, filteredData); // Check the filtered data
 
                 // Update the line path
-                paths[index].datum(filteredData)
-                    .attr("d", lines[index]);
+                // paths[index].datum(filteredData)
+                //     .attr("d", lines[index]);
 
                 // Calculate the max time for normalization
                 const maxTime = d3.max(filteredData, d => +d.time);
@@ -290,7 +293,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 }));
 
                 // Apply gradient effect based on time
-                paths[index].attr("stroke", "none"); // Reset stroke
+                // paths[index].attr("stroke", "none"); // Reset stroke
                 svgs[index].selectAll(".line-segment").remove(); // Remove old segments
 
                 // Draw line segments with color based on time
@@ -393,8 +396,8 @@ document.addEventListener("DOMContentLoaded", function () {
                 // console.log(`Filtered data for plot ${plotId}:`, filteredData); // Check the filtered data
         
                 // Update the line path
-                paths[index + plots.length].datum(filteredData)
-                    .attr("d", lines[index + plots.length]);
+                // paths[index + plots.length].datum(filteredData)
+                //     .attr("d", lines[index + plots.length]);
         
                 // Calculate the max time for normalization
                 const maxTime = d3.max(filteredData, d => +d.time);
@@ -406,7 +409,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 }));
         
                 // Apply gradient effect based on time
-                paths[index + plots.length].attr("stroke", "none"); // Reset stroke
+                // paths[index + plots.length].attr("stroke", "none"); // Reset stroke
                 svgs[index + plots.length].selectAll(".line-segment").remove(); // Remove old segments
         
                 // Draw line segments with color based on time
@@ -751,3 +754,23 @@ document.addEventListener("DOMContentLoaded", function () {
         })
     }
 });
+
+// ------------------------------------- Subject Selection -----------------------------------------
+const container = document.getElementById('plots-container-combined');
+
+container.querySelectorAll('button').forEach(button => {
+    button.addEventListener('click',(event)=>{
+        if (event.target.attr === 'selectedSubject'){ return;}
+        else{
+            const container = document.getElementById('plots-container-combined');
+            container.querySelectorAll('button').forEach(button => {
+                button.setAttribute('class', 'choiceBtn');
+            });
+
+            event.target.setAttribute('class','selectedSubject');
+
+            selectedSubject = event.target.textContent.slice(-1);
+        }
+    })
+});
+
