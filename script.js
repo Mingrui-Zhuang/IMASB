@@ -161,19 +161,19 @@ function setupSliderButtons(sliderId, sliderValueId, audioIndex) {
     const playBtn = document.createElement("button");
     playBtn.textContent = "▶️";
     playBtn.classList.add("play-pause-btn", "play-button");
-    container.appendChild(playBtn);
+    container.insertBefore(playBtn, slider);
 
     // Create Pause button
     const pauseBtn = document.createElement("button");
     pauseBtn.textContent = "⏸️";
     pauseBtn.classList.add("play-pause-btn", "pause-button");
-    container.appendChild(pauseBtn);
+    container.insertBefore(pauseBtn, slider);
 
     // Create Rewind button
     const rewindBtn = document.createElement("button");
     rewindBtn.textContent = "⏪️";
     rewindBtn.classList.add("play-pause-btn", "rewind-button");
-    container.appendChild(rewindBtn);
+    container.insertBefore(rewindBtn, slider);
 
     // PLAY
     playBtn.addEventListener("click", function() {
@@ -733,8 +733,8 @@ document.addEventListener("DOMContentLoaded", function () {
         // console.log(sliderValueDisplay);
 
         //set up the dimension of bar
-        const barMargin = { top: 20, right: 30, bottom: 40, left: 40 };
-        const barWidth = 460 - barMargin.left - barMargin.right;
+        const barMargin = { top: 20, right: 30, bottom: 40, left: 50 };
+        const barWidth = 470 - barMargin.left - barMargin.right;
         const barHeight = 310 - barMargin.top - barMargin.bottom;
         //creating displacement graph
         createBarChart(data1, 1, 0, 'bar');
@@ -918,7 +918,7 @@ document.addEventListener("DOMContentLoaded", function () {
             svg.append("text")
             .attr("class", "axis-label")
             .attr("transform", "rotate(-90)") // Rotate the label to be vertical
-            .attr("y", 10) // Position the label
+            .attr("y", 20) // Position the label
             .attr("x", -barHeight / 2) // Adjust this to position the label along the Y-axis
             .style("text-anchor", "middle") // Center the label horizontally
             .style("font-size", "12px")
@@ -943,7 +943,7 @@ document.addEventListener("DOMContentLoaded", function () {
             // Add X-axis label
             svg.append("text")
                 .attr("class", "axis-label")
-                .attr("transform", `translate(${(barWidth+barMargin.left)/2}, ${barHeight-5})`)
+                .attr("transform", `translate(${(barWidth+barMargin.left)/2}, ${barHeight-10})`)
                 .style("text-anchor", "middle")
                 .text("Environment")
                 .style("font-size", "12px");  // Adjust font size
