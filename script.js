@@ -889,10 +889,10 @@ document.addEventListener("DOMContentLoaded", function () {
         // Function to get the color for each bar (based on its dataset)
         function getBarColor(j) {
             const colors = [
-                "rgba(0, 0, 0, 0.6)", // For WL1
-                "rgba(22, 50, 50, 0.6)", // For WL2
-                "rgba(50, 50, 50, 0.6)", // For WN
-                "rgba(255, 255, 255, 0.6)" // For WR
+                "#FF5733", // For WL1
+                "#FF8D1A", // For WL2
+                "#FFC300", // For WN
+                "#FF5733"  // For WR
             ];
             return colors[j]; // Use the color corresponding to the dataset
         }
