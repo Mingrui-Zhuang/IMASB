@@ -308,7 +308,7 @@ select {
     height: auto;
     padding: 5px;
     font: 12px sans-serif;
-    background: var(--button-bg-color);
+    background: #57e38b;
     border: 0px;
     border-radius: 8px;
     pointer-events: none;
