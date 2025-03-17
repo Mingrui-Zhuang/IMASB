@@ -1004,6 +1004,8 @@ container.querySelectorAll('button').forEach(button => {
                 const combinedSlider = d3.select("#time-slider-combined");
                 const combinedSliderValue = d3.select("#slider-value-combined");
 
+                const timeToSwitch = combinedSlider.property("valueAsNumber");
+
                 combinedSlider.on("input", function () {
                     const currentTime = +this.value;
                     combinedSliderValue.text(`${currentTime / 100}s`);
@@ -1131,6 +1133,9 @@ container.querySelectorAll('button').forEach(button => {
                             });
                     });
                 });
+
+                combinedSlider.property("valueAsNumber", timeToSwitch);
+                combinedSlider.dispatch("input");
             });
         }
     });
