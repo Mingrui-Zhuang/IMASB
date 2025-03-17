@@ -255,17 +255,23 @@ document.addEventListener("DOMContentLoaded", function () {
     plots.forEach((plotId, index) => {
         const svg = d3.select(`#${plotId}`)
             .append("svg")
-            // .attr("width", width + margin.left + margin.right)
-            // .attr("height", height + margin.top + margin.bottom)
             .attr("viewBox", `0 0 ${width + margin.left + margin.right} ${height + margin.top + margin.bottom}`)
             .attr("preserveAspectRatio", "xMidYMid meet")
             .append("g")
             .attr("transform", `translate(${margin.left},${margin.top})`);
 
+        // Add the background image
+        svg.append("image")
+            .attr("xlink:href", "Foot.jpg") // Replace with the path to your image
+            .attr("x", 376)
+            .attr("y", -18)
+            .attr("width", 50)
+            .attr("height", 50)
+        
         // Add the title
         svg.append("text")
             .attr("x", (width / 2))
-            .attr("y", 9 - (margin.top / 2))
+            .attr("y", - (margin.top / 2))
             .attr("text-anchor", "middle")
             .style("font-size", "16px")
             .style("text-decoration", "bold")
@@ -278,6 +284,24 @@ document.addEventListener("DOMContentLoaded", function () {
             .x(d => xScale(d.CoPx))
             .y(d => yScale(d.CoPy));
 
+        // Add x-zero line
+        svg.append("line")
+            .attr("x1", 0)
+            .attr("y1", yScale(0))
+            .attr("x2", width)
+            .attr("y2", yScale(0))
+            .attr("stroke", "black")
+            .attr("stroke-width", 1);
+
+        // Add y-zero line
+        svg.append("line")
+            .attr("x1", xScale(0))
+            .attr("y1", 0)
+            .attr("x2", xScale(0))
+            .attr("y2", height)
+            .attr("stroke", "black")
+            .attr("stroke-width", 1);
+
         svg.append("g")
             .attr("transform", `translate(0,${height})`)
             .call(d3.axisBottom(xScale))
@@ -288,7 +312,7 @@ document.addEventListener("DOMContentLoaded", function () {
             .attr("y", margin.bottom + 10)
             .style("text-anchor", "middle")
             .style("font-size", "12px")
-            .text("CoPx");
+            .text("CoPx(m)");
 
         svg.append("g")
             .call(d3.axisLeft(yScale))
@@ -300,7 +324,7 @@ document.addEventListener("DOMContentLoaded", function () {
             .attr("y", -margin.left + 15)
             .style("text-anchor", "middle")
             .style("font-size", "12px")
-            .text("CoPy");
+            .text("CoPy(m)");
 
         const path = svg.append("path")
             .attr("class", "line")
@@ -347,7 +371,7 @@ document.addEventListener("DOMContentLoaded", function () {
         // Add the title
         svg.append("text")
             .attr("x", (width / 2))
-            .attr("y", 9 - (margin.top / 2))
+            .attr("y", - (margin.top / 2))
             .attr("text-anchor", "middle")
             .style("font-size", "16px")
             .style("text-decoration", "bold")
@@ -360,6 +384,24 @@ document.addEventListener("DOMContentLoaded", function () {
             .x(d => xScale(d.CoPx))
             .y(d => yScale(d.CoPy));
 
+            // Add x-zero line
+        svg.append("line")
+            .attr("x1", 0)
+            .attr("y1", yScale(0))
+            .attr("x2", width)
+            .attr("y2", yScale(0))
+            .attr("stroke", "black")
+            .attr("stroke-width", 1);
+
+        // Add y-zero line
+        svg.append("line")
+            .attr("x1", xScale(0))
+            .attr("y1", 0)
+            .attr("x2", xScale(0))
+            .attr("y2", height)
+            .attr("stroke", "black")
+            .attr("stroke-width", 1);
+
         svg.append("g")
             .attr("transform", `translate(0,${height})`)
             .call(d3.axisBottom(xScale))
@@ -370,7 +412,7 @@ document.addEventListener("DOMContentLoaded", function () {
             .attr("y", margin.bottom + 10)
             .style("text-anchor", "middle")
             .style("font-size", "12px")
-            .text("CoPx");
+            .text("CoPx(m)");
 
         svg.append("g")
             .call(d3.axisLeft(yScale))
@@ -382,7 +424,7 @@ document.addEventListener("DOMContentLoaded", function () {
             .attr("y", -margin.left + 15)
             .style("text-anchor", "middle")
             .style("font-size", "12px")
-            .text("CoPy");
+            .text("CoPy(m)");
 
         const path = svg.append("path")
             .attr("class", "line")
@@ -875,7 +917,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     }
 
                 });
-                createYAxisLabels(svg, maxForce, 'Work'); //create unique y-label                
+                createYAxisLabels(svg, maxForce, 'Torque'); //create unique y-label                
             }
             //createYAxisLabels(svg, maxValue);
             // Create the X-axis

@@ -1,5 +1,5 @@
 :root {
-    --bg-color: #e9e4d4;
+    --bg-color: #e9e5da;
     --text-color: #443e46;
     --link-color: #1247aa;
     --link-hover-color: #3e36d1;
@@ -64,6 +64,9 @@ p {
     margin-bottom: 20px;
 }
 
+strong {
+    color: red;
+}
 
 .slides-container {
     margin: 0;
@@ -332,5 +335,5 @@ select {
 .hover-line {
     stroke: var(--border-color);
     stroke-width: 1px;
-    stroke-dasharray: 3, 3;
+    stroke-dasharray: 5, 5;
 }
