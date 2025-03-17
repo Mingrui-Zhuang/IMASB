@@ -262,7 +262,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         // Add the background image
         svg.append("image")
-            .attr("xlink:href", "Foot.jpg") // Replace with the path to your image
+            .attr("xlink:href", "Foot.png") // Replace with the path to your image
             .attr("x", 376)
             .attr("y", -18)
             .attr("width", 50)
@@ -312,7 +312,7 @@ document.addEventListener("DOMContentLoaded", function () {
             .attr("y", margin.bottom + 10)
             .style("text-anchor", "middle")
             .style("font-size", "12px")
-            .text("CoPx(m)");
+            .text("CoPx (meter)");
 
         svg.append("g")
             .call(d3.axisLeft(yScale))
@@ -324,7 +324,7 @@ document.addEventListener("DOMContentLoaded", function () {
             .attr("y", -margin.left + 15)
             .style("text-anchor", "middle")
             .style("font-size", "12px")
-            .text("CoPy(m)");
+            .text("CoPy (meter)");
 
         const path = svg.append("path")
             .attr("class", "line")
@@ -412,7 +412,7 @@ document.addEventListener("DOMContentLoaded", function () {
             .attr("y", margin.bottom + 10)
             .style("text-anchor", "middle")
             .style("font-size", "12px")
-            .text("CoPx(m)");
+            .text("CoPx (m)");
 
         svg.append("g")
             .call(d3.axisLeft(yScale))
@@ -424,7 +424,7 @@ document.addEventListener("DOMContentLoaded", function () {
             .attr("y", -margin.left + 15)
             .style("text-anchor", "middle")
             .style("font-size", "12px")
-            .text("CoPy(m)");
+            .text("CoPy (m)");
 
         const path = svg.append("path")
             .attr("class", "line")
@@ -863,7 +863,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     if (i === choice - 1){ //add current
                         svg.append('text')
                         .attr('x', selectedLocations[i]+selectedWidths/2) // Center the text on top and center of the bar
-                        .attr('y', barHeight - scaleHeight(dataSet[idx],maxValue)-barMargin.bottom - 10) // 10px above the top of the bar
+                        .attr('y', barHeight - scaleHeight(dataSet[idx],maxValue)-barMargin.bottom - 5) // 10px above the top of the bar
                         .attr('text-anchor', 'middle') // Center the text horizontally
                         .attr('fill', getBarColor(i)) // Text color
                         .attr('font-size', '13px') // Set the font size to 5px
@@ -874,7 +874,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     else{
                         svg.append('text')
                         .attr('x', selectedLocations[i]+selectedWidths/2) // Center the text on top and center of the bar
-                        .attr('y', barHeight - scaleHeight(dataSet[idx],maxValue)-barMargin.bottom - 10) // 10px above the top of the bar
+                        .attr('y', barHeight - scaleHeight(dataSet[idx],maxValue)-barMargin.bottom - 5) // 10px above the top of the bar
                         .attr('text-anchor', 'middle') // Center the text horizontally
                         .attr('fill', getBarColor(i)) // Text color
                         .attr('font-size', '12px') // Set the font size to 5px
@@ -882,7 +882,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     }
 
                 });
-                createYAxisLabels(svg, maxValue, 'displacement'); //create unique y-label
+                createYAxisLabels(svg, maxValue, 'displacement (m)'); //create unique y-label
             }
             else if (name === 'forceBar'){
                 selectedData.forEach((dataSet, i) => {
@@ -898,7 +898,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     if (i === choice - 1){ //add current
                         svg.append('text')
                         .attr('x', selectedLocations[i]+selectedWidths/2) // Center the text on top and center of the bar
-                        .attr('y', barHeight - scaleHeight(dataSet[idx],maxForce)-barMargin.bottom - 10) // 10px above the top of the bar
+                        .attr('y', barHeight - scaleHeight(dataSet[idx],maxForce)-barMargin.bottom - 5) // 10px above the top of the bar
                         .attr('text-anchor', 'middle') // Center the text horizontally
                         .attr('fill', getBarColor(i)) // Text color
                         .attr('font-size', '13px') // Set the font size to 5px
@@ -909,7 +909,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     else{
                         svg.append('text')
                         .attr('x', selectedLocations[i]+selectedWidths/2) // Center the text on top and center of the bar
-                        .attr('y', barHeight - scaleHeight(dataSet[idx],maxForce)-barMargin.bottom - 10) // 10px above the top of the bar
+                        .attr('y', barHeight - scaleHeight(dataSet[idx],maxForce)-barMargin.bottom - 5) // 10px above the top of the bar
                         .attr('text-anchor', 'middle') // Center the text horizontally
                         .attr('fill', getBarColor(i)) // Text color
                         .attr('font-size', '12px') // Set the font size to 5px
@@ -917,7 +917,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     }
 
                 });
-                createYAxisLabels(svg, maxForce, 'Torque'); //create unique y-label                
+                createYAxisLabels(svg, maxForce, 'Torque (m*N)'); //create unique y-label                
             }
             //createYAxisLabels(svg, maxValue);
             // Create the X-axis
