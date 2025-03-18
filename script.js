@@ -990,7 +990,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     .attr("class", "axis-label")
                     .attr("transform", `translate(${(barWidth+barMargin.left)/2}, ${barHeight-10})`)
                     .style("text-anchor", "middle")
-                    .text("Total Traveled Distance")
+                    .text("Accumulated Torque")
                     .style("font-size", "12px");  // Adjust font size
             }
 
@@ -1000,7 +1000,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 .attr("class", "axis-label")
                 .attr("transform", `translate(${(barWidth+barMargin.left)/2}, ${barHeight-10})`)
                 .style("text-anchor", "middle")
-                .text("Accumulated Torque")
+                .text("Traveled Distance")
                 .style("font-size", "12px");  // Adjust font size
             }
         }
