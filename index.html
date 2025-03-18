@@ -105,6 +105,21 @@
                 <input type="range" id="time-slider-combined" min="0" max="6000" value="0">
                 <span id="slider-value-combined">0s</span>
             </div>
+                <!-- Button to trigger displaying info -->
+                <button onclick="showInfo()" class = "take">TakeAway</button>
+
+                <!-- The info box that will be displayed -->
+                <div id="infoBox" class="info-box">
+                    <button class="close-btn" onclick="closeInfo()">X</button>
+                    <h2>Takeaway Information</h2>
+                    <p>1. Generally, our visualization shows that music makes the body swing more than the silence condition, 
+                       which might be due to the nature of music.</p>  
+                    <p>2. The change of frequency can result in signaling the vestibule to perform weird behaviors.
+                    Also, <target>0.1 Hz</target> causes the most body swing among all conditions.</p> 
+                    <p>3. This might be due to the nature of cycles falling in a specific range, and <target>0.1 Hz</target> matches this cycle most. 
+                    This gives the body to sync, as a result, manifesting the body swing. </p>
+            </div>
+
             <div id="main-content">
                 <div id="buttons-container">
                     <button id="choiceBtn1" class="selectedSubject">Subject1</button>

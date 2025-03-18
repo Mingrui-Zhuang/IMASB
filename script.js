@@ -1197,3 +1197,13 @@ container.querySelectorAll('button').forEach(button => {
     });
 });
 
+// Function to show the info box
+function showInfo() {
+    document.getElementById('infoBox').style.display = 'block';
+}
+
+// Function to close the info box
+function closeInfo() {
+    document.getElementById('infoBox').style.display = 'none';
+}
+
