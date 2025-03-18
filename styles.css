@@ -338,6 +338,58 @@ select {
     stroke-dasharray: 5, 5;
 }
 
+/* Style for the takeaway button */
+.take {
+    position: fixed; /* Fixed position relative to the viewport */
+    top: 10px; /* 10px from the top */
+    right: 10px; /* 10px from the right */
+    padding: 15px 25px; /* Increase padding for a larger button */
+    font-size: 20px; /* Bigger text size */
+    background-color: rgb(106, 187, 207); /* Green background color */
+    color: rgb(0, 0, 0); /* White text color */
+    border: none; /* Remove border */
+    border-radius: 10px; /* Rounded corners */
+    cursor: pointer; /* Pointer cursor on hover */
+    z-index: 1000; /* Ensures the button stays above other content */
+}
+
+.takeaway-button:hover {
+    background-color: #6dd295; /* Slightly darker green on hover */
+}
+
+/* Style for the info box */
+.info-box {
+    display: none;
+    position: fixed;
+    top: 20%;
+    left: 20%;
+    width: 60%;
+    background-color: rgb(106, 187, 207);
+    padding: 20px;
+    border: 1px solid #ccc;
+    box-shadow: 0 4px 8px rgba(5, 5, 5, 0.1);
+    z-index: 1000;
+}
+
+.info-box h2 {
+    margin-top: 0;
+}
+
+.close-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: red;
+    color: white;
+    border: none;
+    padding: 5px;
+    cursor: pointer;
+}
+
+target {
+    color: #FFC300
+}
+
 
 .slide.full-page {
     position: relative;

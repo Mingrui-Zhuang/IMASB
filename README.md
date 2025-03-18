@@ -15,3 +15,6 @@ Data preparation：Cleaning and imputing the missing data, as well as aggregatin
 Visualization design: Picking an efficient layout to display data without too much information involved to distract the reader. At the same time, it should be well organized to have a nice scroll-style storytelling presentation.
 
 Visualization implementation: Optimizing a concurrent plotting algorithm for four time-series trajectory plots to avoid any lag when scrolling the slider to observe subjects’ change over time.
+
+## Youtube link: 
+https://youtu.be/TLgvESb4sZs
