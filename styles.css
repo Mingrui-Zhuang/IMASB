@@ -7,7 +7,7 @@
     --button-hover-bg-color: #ff5B60;
     --button-text-color: #e9e4d4;
     --border-color: #210303;
-    --color: #2b6b1f;
+    --tool-color: #73d761;
 }
 
 body, html {
@@ -55,13 +55,22 @@ a:hover {
     text-decoration: underline; /* Underline on hover */
 }
 
-p {
+p{
     font-size: 1.3rem;
-    padding:20px;
+    padding:10px;
     text-align: left;
     margin-left: 100px;
     margin-right: 100px;
-    margin-bottom: 20px;
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+li{
+    font-size: 1rem;
+    text-align: left;
+    margin-left: 100px;
+    margin-right: 100px;
+    margin-bottom: 5px;
 }
 
 strong {
@@ -311,7 +320,7 @@ select {
     height: auto;
     padding: 5px;
     font: 12px sans-serif;
-    background: #57e38b;
+    background: var(--tool-color);
     border: 0px;
     border-radius: 8px;
     pointer-events: none;
@@ -340,12 +349,12 @@ select {
 
 /* Style for the takeaway button */
 .take {
-    position: fixed; /* Fixed position relative to the viewport */
-    top: 10px; /* 10px from the top */
-    right: 10px; /* 10px from the right */
-    padding: 15px 25px; /* Increase padding for a larger button */
-    font-size: 20px; /* Bigger text size */
-    background-color: rgb(106, 187, 207); /* Green background color */
+    position: fixed;
+    top: 20px;
+    right: 30px;
+    padding: 15px 15px; /* Increase padding for a larger button */
+    font-size: 18px; /* Bigger text size */
+    background-color: var(--tool-color); /* Green background color */
     color: rgb(0, 0, 0); /* White text color */
     border: none; /* Remove border */
     border-radius: 10px; /* Rounded corners */
@@ -353,8 +362,8 @@ select {
     z-index: 1000; /* Ensures the button stays above other content */
 }
 
-.takeaway-button:hover {
-    background-color: #6dd295; /* Slightly darker green on hover */
+.take:hover {
+    background-color: #16ae64; /* Slightly darker green on hover */
 }
 
 /* Style for the info box */
@@ -364,11 +373,13 @@ select {
     top: 20%;
     left: 20%;
     width: 60%;
-    background-color: rgb(106, 187, 207);
+    height: 50%;
+    background-color: var(--tool-color);
     padding: 20px;
     border: 1px solid #ccc;
     box-shadow: 0 4px 8px rgba(5, 5, 5, 0.1);
     z-index: 1000;
+    border-radius: 8px;
 }
 
 .info-box h2 {
@@ -382,12 +393,13 @@ select {
     background-color: red;
     color: white;
     border: none;
-    padding: 5px;
+    padding: 5px 10px;
     cursor: pointer;
+    border-radius: 50%;
 }
 
 target {
-    color: #FFC300
+    font-weight: bold;
 }
 
 
