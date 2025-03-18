@@ -69,6 +69,11 @@ document.getElementById('nextBtn').addEventListener('click', function() {
 let isScrolling = false;
 
 function handleWheelEvent(event) {
+    // handle nextBtn come back
+    const slides = document.querySelectorAll('.slide');
+    let currentSlide = Array.from(slides).findIndex(slide => slide.style.display !== 'none');
+    if (currentSlide === 2){ document.querySelector('#nextBtn').style.opacity = 100; } 
+
     if (isScrolling) return;
     isScrolling = true;
     if (event.deltaY > 0) {
@@ -91,6 +96,57 @@ document.addEventListener('DOMContentLoaded', function() {
         slide.style.opacity = index === 0 ? 1 : 0;
     });
 });
+
+function animateDialogue(dialogue) {
+    const fullText = dialogue.textContent.trim();
+    dialogue.textContent = "";
+    const words = fullText.split(" ");
+    let delay = 0;
+    words.forEach(word => {
+        const span = document.createElement("span");
+        span.textContent = word + " "; // include a trailing space
+        span.style.opacity = 0;
+        dialogue.appendChild(span);
+        setTimeout(() => {
+            span.style.transition = "opacity 0.5s";
+            span.style.opacity = 1;
+        }, delay);
+        delay += 200; // Adjust delay per word if desired 200
+    });
+}
+
+document.addEventListener("DOMContentLoaded", function() {
+    // Animate the dialogue on the first hook slide immediately (if desired)
+    const slideMinus2 = document.getElementById("slide-2");
+    if(slideMinus2) {
+        const dialogue = slideMinus2.querySelector(".dialogue");
+        if(dialogue) {
+            animateDialogue(dialogue);
+        }
+    }
+
+    // Set up IntersectionObserver for other full-page slides (e.g., slide -1)
+    const observer = new IntersectionObserver((entries, obs) => {
+        entries.forEach(entry => {
+            if(entry.isIntersecting) {
+                const dialogue = entry.target.querySelector(".dialogue");
+                if(dialogue) {
+                    animateDialogue(dialogue);
+                    // Unobserve if you want the animation to run only once.
+                    obs.unobserve(entry.target);
+                }
+            }
+        });
+    }, { threshold: 0.5 });
+    
+    // Observe slide -1 (or all full-page slides if needed)
+    const slideMinus1 = document.getElementById("slide-1");
+    if (slideMinus1) {
+        observer.observe(slideMinus1);
+    }
+});
+
+
 
 // *********************************************Initialize Slider Buttons*********************************************
 function setupSliderButtons(sliderId, sliderValueId, audioIndex) {
