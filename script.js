@@ -883,6 +883,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
                 });
                 createYAxisLabels(svg, maxValue, 'displacement (m)'); //create unique y-label
+                createXAxisLabels(svg, choice, 'displacement (m)'); //create unqiue x-label
             }
             else if (name === 'forceBar'){
                 selectedData.forEach((dataSet, i) => {
@@ -917,11 +918,12 @@ document.addEventListener("DOMContentLoaded", function () {
                     }
 
                 });
-                createYAxisLabels(svg, maxForce, 'Torque (m*N)'); //create unique y-label                
+                createYAxisLabels(svg, maxForce, 'Torque (m*N)'); //create unique y-label 
+                createXAxisLabels(svg, choice, 'Torque (m*N)'); //create unique x-label               
             }
             //createYAxisLabels(svg, maxValue);
             // Create the X-axis
-            createXAxisLabels(svg, choice); // Create X-axis without scaling, based on categories
+            //createXAxisLabels(svg, choice); // Create X-axis without scaling, based on categories
         }
 
         function scaleHeight(value, max) {
@@ -967,7 +969,7 @@ document.addEventListener("DOMContentLoaded", function () {
             .text(`${yname}`);
         }
 
-        function createXAxisLabels(svg, idx){
+        function createXAxisLabels(svg, idx, dt){
             const arr = labels.slice(0,idx)
             const xScale = d3.scaleBand()
                 .domain(arr) //categories
@@ -982,13 +984,25 @@ document.addEventListener("DOMContentLoaded", function () {
                 .attr("transform", `translate(0, ${barHeight-barMargin.bottom})`) // Position X-axis at the bottom of the chart
                 .call(xAxis);
 
+            if (dt === 'Torque (m*N)'){ //create unique torque label
+            // Add X-axis label
+                svg.append("text")
+                    .attr("class", "axis-label")
+                    .attr("transform", `translate(${(barWidth+barMargin.left)/2}, ${barHeight-10})`)
+                    .style("text-anchor", "middle")
+                    .text("Total Traveled Distance")
+                    .style("font-size", "12px");  // Adjust font size
+            }
+
+            else if (dt === 'displacement (m)'){ //create unqiue displacement label
             // Add X-axis label
             svg.append("text")
                 .attr("class", "axis-label")
                 .attr("transform", `translate(${(barWidth+barMargin.left)/2}, ${barHeight-10})`)
                 .style("text-anchor", "middle")
-                .text("Environment")
+                .text("Accumulated Torque")
                 .style("font-size", "12px");  // Adjust font size
+            }
         }
     });
 
